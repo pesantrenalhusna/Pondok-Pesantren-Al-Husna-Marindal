@@ -260,6 +260,18 @@ footer .cp{background:#103b25}
  .stats b{font-size:25px}
 }
 
+
+/* Latar foto asli Pondok Pesantren Al-Husna Marindal */
+.hero{background:linear-gradient(90deg,rgba(3,35,25,.88) 0%,rgba(4,58,39,.76) 52%,rgba(5,48,36,.48) 100%),url('suasana-al-husna.webp') center 54%/cover no-repeat!important}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(2,28,20,.26),transparent 45%);pointer-events:none}
+.hero .in{position:relative;z-index:1}
+.alh-photo{position:relative;min-height:300px;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;background:linear-gradient(90deg,rgba(3,36,27,.76),rgba(3,45,33,.48)),url('kegiatan-santri-al-husna.webp') center 48%/cover no-repeat}
+.alh-photo .caption{max-width:850px;padding:54px 22px}
+.alh-photo small{color:#f2d88e;letter-spacing:.16em;text-transform:uppercase;font-weight:800}
+.alh-photo h3{font-size:clamp(27px,4vw,42px);margin:10px 0;color:#fff}
+.alh-photo p{margin:0;color:#f0f5f2;font-size:15px}
+@media(max-width:600px){.hero{background-position:58% center!important}.alh-photo{min-height:245px}.alh-photo .caption{padding:40px 20px}}
+
 </style></head><body>
 <div class="top"><span>Yayasan Pondok Pesantren Al-Husna</span><span>Portal Akademik &amp; Informasi Pesantren</span></div>
 <header><img src="logo.png" alt="Logo"><div class="br"><b>PONDOK PESANTREN AL-HUSNA</b><small>Pondok Pesantren · Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</small></div><a class="la" href="#admin">Login Admin ↗</a><button id="mb" onclick="$('#nav').classList.toggle('open')">☰</button></header>
@@ -286,6 +298,7 @@ function beranda(){const sh=(a,b)=>`<div class="sh rv"><small>${a}</small><h3>${
 const F=[['📖','Kurikulum Terpadu','Perpaduan ilmu agama, bahasa, dan ilmu umum.'],['🕌','Pembinaan Akhlak','Pembiasaan ibadah dan adab dalam keseharian santri.'],['🌍','Wawasan Global','Penguatan bahasa Arab dan Inggris sejak dini.'],['💻','Layanan Digital','Absensi, KTA, dan raport berbasis digital.']];
 const PR=[['Tahfidz Al-Qur\'an','📗','#0a9b48','Program hafalan dan tahsin dengan bimbingan ustadz.'],['Kajian Kitab & Hadits','📜','#0b6b3a','Tauhid, Fiqih, Nahwu, Shorof dan ilmu Hadits.'],['Bahasa Arab & Inggris','🗣️','#0b8050','Muhadatsah dan percakapan harian dua bahasa.'],['Sains & Matematika','🔬','#c7a34b','Ilmu umum sebagai bekal menghadapi masa depan.'],['Kepemimpinan','🎤','#0b6b3a','Latihan pidato, organisasi, dan kepanduan.'],['Kemandirian','🌱','#0b8050','Keterampilan hidup dan jiwa wirausaha santri.']];
 return`<section class="hero"><div class="in"><div><span class="pill">Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</span><h2>Membangun Generasi <em>Qur'ani</em>, Berilmu &amp; Berakhlak Mulia</h2><p>Pondok Pesantren Al-Husna memadukan pendidikan Al-Qur'an, Hadits, dan ilmu pengetahuan untuk membentuk generasi berkarakter, mandiri, dan siap menghadapi masa depan.</p><form class="sb" onsubmit="sessionStorage.q=this.q.value;location.hash='cari';return false"><input name="q" placeholder="Cari santri berdasarkan nama / NIS…"><button class="btn">Cari</button></form><div style="margin-top:22px"><a class="btn o" href="#daftar">Daftar Santri Baru</a> &nbsp;<a class="btn" style="background:rgba(255,255,255,.15)" href="#tentang">Tentang Kami</a></div></div><div class="lg"><img src="logo.png" alt="Logo Al-Husna"></div></div></section>
+<section class="alh-photo" aria-label="Suasana kegiatan santri Pondok Pesantren Al-Husna"><div class="caption"><small>Kehidupan di Al-Husna</small><h3>Belajar, Beribadah, dan Bertumbuh Bersama</h3><p>Suasana kebersamaan dan kegiatan santri di lingkungan Pondok Pesantren Al-Husna Marindal.</p></div></section>
 <div class="stats"><div><b>${S.length}</b><span>Santri &amp; Santriwati</span></div><div><b>${G.length}</b><span>Ustadz &amp; Ustadzah</span></div><div><b>${new Set(S.map(x=>x.kelas)).size}</b><span>Kelas Aktif</span></div><div><b>${P.length}</b><span>Pendaftar Baru</span></div></div>
 <div class="wrap"><section class="sec">${sh('Keunggulan','Mengapa Memilih Al-Husna')}<div class="grid">${F.map(f=>`<div class="ft rv"><div class="ic">${f[0]}</div><h4>${f[1]}</h4><p>${f[2]}</p></div>`).join('')}</div></section>
 <section class="sec">${sh('Pendidikan','Program Unggulan')}<div class="grid">${PR.map(p=>`<div class="pg rv"><div class="bar" style="background:${p[2]}">${p[1]}</div><div><h4>${p[0]}</h4><p>${p[3]}</p></div></div>`).join('')}</div></section>
