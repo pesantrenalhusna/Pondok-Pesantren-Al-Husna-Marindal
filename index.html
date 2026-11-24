@@ -272,6 +272,26 @@ footer .cp{background:#103b25}
 .alh-photo p{margin:0;color:#f0f5f2;font-size:15px}
 @media(max-width:600px){.hero{background-position:58% center!important}.alh-photo{min-height:245px}.alh-photo .caption{padding:40px 20px}}
 
+
+/* ===== MODERN UNIVERSITY-STYLE VISUAL SYSTEM ===== */
+:root{--g:#145c3a;--g2:#28764d;--gd:#103d2b;--y:#c6a15a;--bg:#f6f8f7;--t:#202b26;--m:#65736b;--b:#e1e8e3}
+body{font-family:'Public Sans','Plus Jakarta Sans',system-ui,sans-serif;background:#f6f8f7;color:#202b26}
+h1,h2,h3,h4{font-family:'Public Sans','Plus Jakarta Sans',sans-serif;letter-spacing:-.025em}
+.br b{font-family:'Public Sans',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;color:#164c34}
+.hero{background:linear-gradient(90deg,rgba(7,35,25,.91),rgba(12,65,43,.72) 58%,rgba(12,55,40,.42)),url('suasana-al-husna.webp') center 54%/cover no-repeat!important}
+.hero .in{min-height:440px}.hero h2{font-family:'Public Sans',sans-serif;font-weight:800;letter-spacing:-.045em}
+.sh h3{font-family:'Public Sans',sans-serif;font-weight:800;color:#173f2e}
+.ft,.pg,.nw,.card{border-radius:13px;border:1px solid #e1e8e3;box-shadow:0 5px 18px rgba(18,55,36,.045)}
+.ft{padding:25px}.ft:hover,.pg:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(18,55,36,.09)}
+.ic{width:48px;height:48px;border-radius:12px;background:#edf4ef;color:#1b6542;display:grid;place-items:center;margin-bottom:18px}
+.ic svg,.pg .bar svg{width:25px;height:25px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pg .bar{height:82px;font-size:0!important;display:flex;align-items:center;justify-content:flex-start;padding:0 24px;background:#edf4ef!important;color:#1b6542!important;border-bottom:1px solid #e1e8e3}
+.pg .bar svg{width:30px;height:30px}.ft h4,.pg h4{font-family:'Public Sans',sans-serif;font-weight:750;font-size:16px;color:#194b35}
+.stats div{border-radius:12px!important;border:1px solid #e1e8e3!important;border-bottom:3px solid #28764d!important;box-shadow:0 5px 18px rgba(18,55,36,.05)}
+.stats b{font-family:'Public Sans',sans-serif;font-weight:800}.nw{align-items:center}.nw .d{border-radius:10px;background:#edf4ef;color:#1b6542;border:1px solid #dce9df}
+.nw .d b{font-family:'Public Sans',sans-serif;font-size:16px}.btn,.la{background:#176342;border-radius:8px}.btn.o{background:#c6a15a;color:#18271f}
+.admin-editor{display:grid;gap:18px}.editor-panel{background:#fff;border:1px solid #e1e8e3;border-radius:12px;padding:20px}.editor-panel h3{margin:0 0 12px;color:#174b34;font-size:18px}.editor-item{display:grid;grid-template-columns:1fr 1fr 130px 150px;gap:10px;padding:12px 0;border-top:1px solid #edf1ee}.editor-item input,.editor-item select{min-width:0}.editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.muted-note{font-size:12px;color:#65736b;line-height:1.6}
+@media(max-width:700px){.editor-item{grid-template-columns:1fr 1fr}.editor-item>*{min-width:0}.hero .in{min-height:0}}
 </style></head><body>
 <div class="top"><span>Yayasan Pondok Pesantren Al-Husna</span><span>Portal Akademik &amp; Informasi Pesantren</span></div>
 <header><img src="logo.png" alt="Logo"><div class="br"><b>PONDOK PESANTREN AL-HUSNA</b><small>Pondok Pesantren · Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</small></div><a class="la" href="#admin">Login Admin ↗</a><button id="mb" onclick="$('#nav').classList.toggle('open')">☰</button></header>
@@ -287,6 +307,50 @@ if(!G){G=[{id:1,nip:'G001',nama:'Ustadz Abdullah, S.Pd.I',mapel:'Fiqih'},{id:2,n
 const MP=['Tauhid','Fiqih','Nahwu','Shorof','Tahfidz','Bahasa Arab','Bahasa Inggris','Matematika','Bahasa Indonesia'];
 const ADMIN={u:'admin',p:'alhusna123'};let tab='santri',adm=sessionStorage.alh==='1',selRap=null;
 const menu=[['beranda','Beranda'],['informasi','Informasi'],['tentang','Tentang'],['daftar','Pendaftaran'],['cari','Pencarian Santri']];
+const DEFAULT_SITE={
+ heroTitle:"Membangun Generasi Qur'ani, Berilmu & Berakhlak Mulia",
+ heroDesc:"Pondok Pesantren Al-Husna memadukan pendidikan Al-Qur'an, Hadits, dan ilmu pengetahuan untuk membentuk generasi berkarakter, mandiri, dan siap menghadapi masa depan.",
+ heroEyebrow:"Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang",
+ whyTitle:"Mengapa Memilih Al-Husna", programTitle:"Program Unggulan", newsTitle:"Pengumuman & Agenda",
+ aboutText:"Pondok Pesantren Al-Husna (Tarbiyatul Mu'allimin Al-Islamiyah) berlokasi di Marindal I, Patumbak, Kabupaten Deli Serdang, Sumatera Utara. Pesantren memadukan kajian Al-Qur'an dan Hadits dengan ilmu umum.",
+ visionText:"Menjadi lembaga pendidikan Islam yang melahirkan generasi Qur'ani, mandiri, dan berakhlakul karimah.",
+ missionText:"Pendidikan Al-Qur'an & Hadits\nPenguasaan bahasa Arab & Inggris\nPembinaan akhlak dan kemandirian\nPengembangan wawasan global",
+ contactText:"Jl. Pelajar Pasar III Dusun X, Marindal I, Kec. Patumbak, Kab. Deli Serdang, Sumatera Utara", 
+ features:[
+  {title:'Kurikulum Terpadu',desc:'Perpaduan ilmu agama, bahasa, dan ilmu umum.',icon:'book-open',color:'#1b6542'},
+  {title:'Pembinaan Akhlak',desc:'Pembiasaan ibadah dan adab dalam keseharian santri.',icon:'landmark',color:'#9b7a37'},
+  {title:'Wawasan Global',desc:'Penguatan bahasa Arab dan Inggris sejak dini.',icon:'globe',color:'#326b8b'},
+  {title:'Layanan Digital',desc:'Absensi, KTA, dan raport berbasis digital.',icon:'monitor',color:'#536c83'}
+ ],
+ programs:[
+  {title:"Tahfidz Al-Qur'an",desc:'Program hafalan dan tahsin dengan bimbingan ustadz.',icon:'book',color:'#1b6542'},
+  {title:'Kajian Kitab & Hadits',desc:'Tauhid, Fiqih, Nahwu, Shorof dan ilmu Hadits.',icon:'library',color:'#9b7a37'},
+  {title:'Bahasa Arab & Inggris',desc:'Muhadatsah dan percakapan harian dua bahasa.',icon:'languages',color:'#326b8b'},
+  {title:'Sains & Matematika',desc:'Ilmu umum sebagai bekal menghadapi masa depan.',icon:'flask',color:'#657b55'},
+  {title:'Kepemimpinan',desc:'Latihan pidato, organisasi, dan kepanduan.',icon:'users',color:'#1b6542'},
+  {title:'Kemandirian',desc:'Keterampilan hidup dan jiwa wirausaha santri.',icon:'sprout',color:'#657b55'}
+ ],
+ announcements:[
+  {tag:'PSB',meta:String(new Date().getFullYear()),title:'Penerimaan Santri Baru Dibuka',desc:'Daftarkan putra-putri Anda secara online, lalu lengkapi berkas di sekretariat pondok.'},
+  {tag:'INFO',meta:'Digital',title:'Portal Absensi, KTA & Raport Digital',desc:'Seluruh administrasi santri kini terintegrasi dalam satu portal.'}
+ ]
+};
+let SITE=ld('site_content',DEFAULT_SITE);if(!SITE.features)SITE=DEFAULT_SITE;
+const ICONS={
+ 'book-open':'<path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H12v17H5.5A2.5 2.5 0 0 0 3 22z"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H12v17h6.5A2.5 2.5 0 0 1 21 22z"/>',
+ 'landmark':'<path d="M3 21h18M4 10h16M5 10v9m4-9v9m6-9v9m4-9v9M2 10l10-7 10 7"/>',
+ 'globe':'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+ 'monitor':'<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/>',
+ 'book':'<path d="M5 3h14v18H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 7h10M7 11h10M7 15h6"/>',
+ 'library':'<path d="M4 19V5m5 14V5m5 14V5m5 14V5M2 21h20M2 3h20"/>',
+ 'languages':'<path d="m5 8 4 4-4 4M3 12h6m3 7h9M15 4l-4 11m2-7h5l3 7"/>',
+ 'flask':'<path d="M9 3h6m-5 0v7L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-10V3M7 16h10"/>',
+ 'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m6-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm7-7a4 4 0 0 1 0 8m2 4a4 4 0 0 1 3 4v1"/>',
+ 'sprout':'<path d="M12 22v-9m0 3C5 16 3 12 3 6c6 0 9 2 9 7m0-2c0-6 3-9 9-9 0 6-3 10-9 10"/>'
+};
+function iconSvg(name){return `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]||ICONS.book}</svg>`}
+function saveSite(){sv('site_content',SITE);R()}
+
 const nid=a=>a.reduce((m,x)=>Math.max(m,x.id),0)+1,today=()=>new Date().toISOString().slice(0,10);
 function R(){const v=(location.hash||'#beranda').slice(1);$('#nav').innerHTML=`<div class="side-head"><span>MENU UTAMA</span><strong>Jelajahi Al-Husna</strong></div>`+menu.map(m=>`<a href="#${m[0]}" class="${v==m[0]?'on':''} ${m[0]=='daftar'?'cta':''}">${m[1]}</a>`).join('')+`<a href="#admin" class="${v=='admin'?'on':''}">Portal Admin</a>`;
 $('#yr').textContent=new Date().getFullYear();const pg=({beranda,informasi,tentang,daftar,cari,admin}[v]||beranda)(),tt={informasi:'Informasi Pesantren',tentang:'Tentang Pesantren',daftar:'Pendaftaran Santri Baru',cari:'Pencarian Data Santri',admin:'Portal Admin'};
@@ -294,30 +358,50 @@ $('#app').innerHTML=v=='beranda'||!tt[v]?pg:`<div class="pgb"><div><small>Berand
 if(v=='admin'&&adm)T();if(v=='cari'&&sessionStorage.q){$('#q').value=sessionStorage.q;sessionStorage.q='';fq()}
 const io=new IntersectionObserver(x=>x.forEach(i=>i.isIntersecting&&i.target.classList.add('vis')),{threshold:.1});document.querySelectorAll('.rv').forEach(x=>io.observe(x))}
 addEventListener('hashchange',R);
-function beranda(){const sh=(a,b)=>`<div class="sh rv"><small>${a}</small><h3>${b}</h3><i></i></div>`;
-const F=[['📖','Kurikulum Terpadu','Perpaduan ilmu agama, bahasa, dan ilmu umum.'],['🕌','Pembinaan Akhlak','Pembiasaan ibadah dan adab dalam keseharian santri.'],['🌍','Wawasan Global','Penguatan bahasa Arab dan Inggris sejak dini.'],['💻','Layanan Digital','Absensi, KTA, dan raport berbasis digital.']];
-const PR=[['Tahfidz Al-Qur\'an','📗','#0a9b48','Program hafalan dan tahsin dengan bimbingan ustadz.'],['Kajian Kitab & Hadits','📜','#0b6b3a','Tauhid, Fiqih, Nahwu, Shorof dan ilmu Hadits.'],['Bahasa Arab & Inggris','🗣️','#0b8050','Muhadatsah dan percakapan harian dua bahasa.'],['Sains & Matematika','🔬','#c7a34b','Ilmu umum sebagai bekal menghadapi masa depan.'],['Kepemimpinan','🎤','#0b6b3a','Latihan pidato, organisasi, dan kepanduan.'],['Kemandirian','🌱','#0b8050','Keterampilan hidup dan jiwa wirausaha santri.']];
-return`<section class="hero"><div class="in"><div><span class="pill">Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</span><h2>Membangun Generasi <em>Qur'ani</em>, Berilmu &amp; Berakhlak Mulia</h2><p>Pondok Pesantren Al-Husna memadukan pendidikan Al-Qur'an, Hadits, dan ilmu pengetahuan untuk membentuk generasi berkarakter, mandiri, dan siap menghadapi masa depan.</p><form class="sb" onsubmit="sessionStorage.q=this.q.value;location.hash='cari';return false"><input name="q" placeholder="Cari santri berdasarkan nama / NIS…"><button class="btn">Cari</button></form><div style="margin-top:22px"><a class="btn o" href="#daftar">Daftar Santri Baru</a> &nbsp;<a class="btn" style="background:rgba(255,255,255,.15)" href="#tentang">Tentang Kami</a></div></div><div class="lg"><img src="logo.png" alt="Logo Al-Husna"></div></div></section>
+function beranda(){const sh=(a,b)=>`<div class="sh rv"><small>${a}</small><h3>${e(b)}</h3><i></i></div>`;
+const title=SITE.heroTitle.split(',');
+const heroTitle=e(SITE.heroTitle).replace('Qur\'ani','<em>Qur\'ani</em>');
+return`<section class="hero"><div class="in"><div><span class="pill">${e(SITE.heroEyebrow)}</span><h2>${heroTitle}</h2><p>${e(SITE.heroDesc)}</p><form class="sb" onsubmit="sessionStorage.q=this.q.value;location.hash='cari';return false"><input name="q" placeholder="Cari santri berdasarkan nama / NIS…"><button class="btn">Cari</button></form><div style="margin-top:22px"><a class="btn o" href="#daftar">Daftar Santri Baru</a> &nbsp;<a class="btn" style="background:rgba(255,255,255,.15)" href="#tentang">Tentang Kami</a></div></div><div class="lg"><img src="logo.png" alt="Logo Al-Husna"></div></div></section>
 <section class="alh-photo" aria-label="Suasana kegiatan santri Pondok Pesantren Al-Husna"><div class="caption"><small>Kehidupan di Al-Husna</small><h3>Belajar, Beribadah, dan Bertumbuh Bersama</h3><p>Suasana kebersamaan dan kegiatan santri di lingkungan Pondok Pesantren Al-Husna Marindal.</p></div></section>
 <div class="stats"><div><b>${S.length}</b><span>Santri &amp; Santriwati</span></div><div><b>${G.length}</b><span>Ustadz &amp; Ustadzah</span></div><div><b>${new Set(S.map(x=>x.kelas)).size}</b><span>Kelas Aktif</span></div><div><b>${P.length}</b><span>Pendaftar Baru</span></div></div>
-<div class="wrap"><section class="sec">${sh('Keunggulan','Mengapa Memilih Al-Husna')}<div class="grid">${F.map(f=>`<div class="ft rv"><div class="ic">${f[0]}</div><h4>${f[1]}</h4><p>${f[2]}</p></div>`).join('')}</div></section>
-<section class="sec">${sh('Pendidikan','Program Unggulan')}<div class="grid">${PR.map(p=>`<div class="pg rv"><div class="bar" style="background:${p[2]}">${p[1]}</div><div><h4>${p[0]}</h4><p>${p[3]}</p></div></div>`).join('')}</div></section>
-<section class="sec">${sh('Informasi Terbaru','Pengumuman &amp; Agenda')}<div style="max-width:820px;margin:auto"><div class="nw rv"><div class="d"><b>PSB</b>${new Date().getFullYear()}</div><div><h4>Penerimaan Santri Baru Dibuka</h4><p>Daftarkan putra-putri Anda secara online, lalu lengkapi berkas di sekretariat pondok.</p></div></div><div class="nw rv"><div class="d"><b>INFO</b>Digital</div><div><h4>Portal Absensi, KTA &amp; Raport Digital</h4><p>Seluruh administrasi santri kini terintegrasi dalam satu portal.</p></div></div></div></section>
+<div class="wrap"><section class="sec">${sh('Keunggulan',SITE.whyTitle)}<div class="grid">${SITE.features.map(f=>`<div class="ft rv"><div class="ic" style="color:${e(f.color)}">${iconSvg(f.icon)}</div><h4>${e(f.title)}</h4><p>${e(f.desc)}</p></div>`).join('')}</div></section>
+<section class="sec">${sh('Pendidikan',SITE.programTitle)}<div class="grid">${SITE.programs.map(p=>`<div class="pg rv"><div class="bar" style="color:${e(p.color)};background:${e(p.color)}12!important">${iconSvg(p.icon)}</div><div><h4>${e(p.title)}</h4><p>${e(p.desc)}</p></div></div>`).join('')}</div></section>
+<section class="sec">${sh('Informasi Terbaru',SITE.newsTitle)}<div style="max-width:820px;margin:auto">${SITE.announcements.map(n=>`<div class="nw rv"><div class="d"><b>${e(n.tag)}</b>${e(n.meta)}</div><div><h4>${e(n.title)}</h4><p>${e(n.desc)}</p></div></div>`).join('')}</div></section>
 <section class="sec">${sh('Alur','Tahapan Pendaftaran')}<div class="st rv"><div><h4>Isi Formulir</h4><p>Daftar online melalui portal.</p></div><div><h4>Verifikasi</h4><p>Pemeriksaan berkas oleh panitia.</p></div><div><h4>Tes &amp; Wawancara</h4><p>Seleksi dan wawancara calon santri.</p></div><div><h4>Daftar Ulang</h4><p>Pengumuman dan daftar ulang.</p></div></div></section></div>
 <div class="cta rv"><h3>Siap Bergabung Bersama Al-Husna?</h3><p>Wujudkan pendidikan terbaik untuk putra-putri Anda.</p><a class="btn w" href="#daftar">Daftar Sekarang →</a></div>`}
-function informasi(){return`<h2 class="t">Pengumuman &amp; Agenda</h2><div class="nw"><div class="d"><b>PSB</b>${new Date().getFullYear()}</div><div><h4>Penerimaan Santri Baru Dibuka</h4><p>Daftarkan putra-putri Anda secara online melalui menu Pendaftaran, lalu lengkapi berkas di sekretariat pondok.</p></div></div><div class="nw"><div class="d"><b>INFO</b>Digital</div><div><h4>Portal Absensi, KTA &amp; Raport Digital</h4><p>Administrasi santri dan guru kini terintegrasi dalam satu portal.</p></div></div>
+
+function informasi(){return`<h2 class="t">${e(SITE.newsTitle)}</h2>${SITE.announcements.map(n=>`<div class="nw"><div class="d"><b>${e(n.tag)}</b>${e(n.meta)}</div><div><h4>${e(n.title)}</h4><p>${e(n.desc)}</p></div></div>`).join('')}
 <h2 class="t">Alur Pendaftaran</h2><div class="card"><div class="st"><div><h4>Isi Formulir</h4><p>Daftar online.</p></div><div><h4>Verifikasi</h4><p>Pemeriksaan berkas.</p></div><div><h4>Tes &amp; Wawancara</h4><p>Seleksi calon santri.</p></div><div><h4>Daftar Ulang</h4><p>Setelah pengumuman.</p></div></div></div>
-<h2 class="t">Mata Pelajaran</h2><div class="card">${MP.map(m=>`<span class="btn s" style="margin:3px">${m}</span>`).join('')}</div>`}
-function tentang(){return`<div class="grid"><div class="card"><h3>Tentang Kami</h3>Pondok Pesantren Al-Husna (Tarbiyatul Mu'allimin Al-Islamiyah) berlokasi di Marindal I, Patumbak, Kabupaten Deli Serdang, Sumatera Utara. Pesantren memadukan kajian Al-Qur'an dan Hadits dengan ilmu umum.</div><div class="card"><h3>Visi</h3>Menjadi lembaga pendidikan Islam yang melahirkan generasi Qur'ani, mandiri, dan berakhlakul karimah.</div><div class="card"><h3>Misi</h3>• Pendidikan Al-Qur'an &amp; Hadits<br>• Penguasaan bahasa Arab &amp; Inggris<br>• Pembinaan akhlak dan kemandirian<br>• Pengembangan wawasan global</div></div>
-<h2 class="t">Kontak &amp; Lokasi</h2><div class="card">📍 Jl. Pelajar Pasar III Dusun X, Marindal I, Kec. Patumbak, Kab. Deli Serdang, Sumatera Utara<br>☎️ Isi nomor telepon/WhatsApp pesantren di sini<br>✉️ Isi email pesantren di sini<br><br><a class="btn" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Pondok+Pesantren+Al+Husna+Marindal+Patumbak">Buka Google Maps →</a></div>`}
+<h2 class="t">Mata Pelajaran</h2><div class="card">${MP.map(m=>`<span class="btn s" style="margin:3px">${e(m)}</span>`).join('')}</div>`}
+
+function tentang(){return`<div class="grid"><div class="card"><h3>Tentang Kami</h3>${e(SITE.aboutText)}</div><div class="card"><h3>Visi</h3>${e(SITE.visionText)}</div><div class="card"><h3>Misi</h3>${e(SITE.missionText).replace(/\n/g,'<br>')}</div></div>
+<h2 class="t">Kontak &amp; Lokasi</h2><div class="card">${e(SITE.contactText)}<br><br><a class="btn" target="_blank" href="https://www.google.com/maps/search/?api=1&query=Pondok+Pesantren+Al+Husna+Marindal+Patumbak">Buka Google Maps →</a></div>`}
+
 function daftar(){return`<h2 class="t">Pendaftaran Santri Baru</h2><div class="card"><form onsubmit="return reg(this)"><div class="f2"><div><label>Nama Lengkap</label><input name="nama" required></div><div><label>Jenis Kelamin</label><select name="jk"><option value="L">Laki-laki (Santri)</option><option value="P">Perempuan (Santriwati)</option></select></div><div><label>Tempat, Tanggal Lahir</label><input name="ttl" required></div><div><label>Asal Sekolah</label><input name="asal"></div><div><label>Nama Orang Tua/Wali</label><input name="wali" required></div><div><label>No. HP/WhatsApp Wali</label><input name="hp" required></div></div><label>Alamat</label><textarea name="alamat" rows="2" required></textarea><br><button class="btn">Kirim Pendaftaran</button></form><div id="rm"></div></div>`}
 function reg(f){const d=Object.fromEntries(new FormData(f));d.id=nid(P);d.tgl=today();d.status='Baru';P.push(d);sv('pendaftar',P);f.reset();$('#rm').innerHTML=`<div class="msg">Pendaftaran berhasil terkirim. No. pendaftaran: <b>PSB-${String(d.id).padStart(4,'0')}</b>. Panitia akan menghubungi Anda.</div>`;return false}
 function cari(){return`<h2 class="t">Pencarian Data Santri / Santriwati</h2><div class="card"><input id="q" placeholder="Ketik nama, NIS, atau kelas…" oninput="fq()"><div class="sc" id="qr" style="margin-top:12px"></div></div>`}
 function fq(){const q=$('#q').value.toLowerCase().trim();const r=q?S.filter(s=>[s.nama,s.nis,s.kelas].join(' ').toLowerCase().includes(q)):[];$('#qr').innerHTML=q?`<table><tr><th>NIS</th><th>Nama</th><th>L/P</th><th>Kelas</th></tr>${r.map(s=>`<tr><td>${e(s.nis)}</td><td>${e(s.nama)}</td><td>${e(s.jk)}</td><td>${e(s.kelas)}</td></tr>`).join('')||'<tr><td colspan=4>Tidak ditemukan</td></tr>'}</table>`:'Masukkan kata kunci untuk mencari.'}
 function admin(){if(!adm)return`<h2 class="t">Login Admin</h2><div class="card" style="max-width:380px"><label>Username</label><input id="u"><label>Password</label><input id="pw" type="password"><br><button class="btn" onclick="lg()">Masuk</button><p style="font-size:12px">Demo: admin / alhusna123 (ubah di kode sebelum dipakai).</p></div>`;
-return`<div class="tabs noprint">${[['santri','Data Santri'],['guru','Data Guru'],['psb','Pendaftar Baru'],['absen','Absensi'],['kta','KTA'],['rapor','Raport']].map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';R()">${t[1]}</button>`).join('')}<button class="btn r" onclick="sessionStorage.alh='0';adm=false;R()">Keluar</button></div><div class="card" id="pn"></div>`}
+return`<div class="tabs noprint">${[['santri','Data Santri'],['guru','Data Guru'],['psb','Pendaftar Baru'],['absen','Absensi'],['kta','KTA'],['rapor','Raport'],['desain','Konten & Desain']].map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';R()">${t[1]}</button>`).join('')}<button class="btn r" onclick="sessionStorage.alh='0';adm=false;R()">Keluar</button></div><div class="card" id="pn"></div>`}
 function lg(){if($('#u').value==ADMIN.u&&$('#pw').value==ADMIN.p){adm=true;sessionStorage.alh='1';R()}else alert('Username/password salah')}
-function T(){$('#pn').innerHTML=({santri:pS,guru:pG,psb:pP,absen:pA,kta:pK,rapor:pR}[tab])()}
+function T(){$('#pn').innerHTML=({santri:pS,guru:pG,psb:pP,absen:pA,kta:pK,rapor:pR,desain:pD}[tab])()}
+function pD(){return `<div class="admin-editor"><div class="editor-panel"><h3>Identitas &amp; Tampilan Beranda</h3><div class="f2"><div><label>Judul utama</label><textarea id="edHeroTitle" rows="2">${e(SITE.heroTitle)}</textarea></div><div><label>Deskripsi utama</label><textarea id="edHeroDesc" rows="3">${e(SITE.heroDesc)}</textarea></div><div><label>Teks kecil di atas judul</label><input id="edHeroEyebrow" value="${e(SITE.heroEyebrow)}"></div><div><label>Judul bagian keunggulan</label><input id="edWhyTitle" value="${e(SITE.whyTitle)}"></div><div><label>Judul bagian program</label><input id="edProgramTitle" value="${e(SITE.programTitle)}"></div><div><label>Judul bagian informasi</label><input id="edNewsTitle" value="${e(SITE.newsTitle)}"></div></div></div>
+<div class="editor-panel"><h3>Informasi Profil Pesantren</h3><div class="f2"><div><label>Tentang Kami</label><textarea id="edAbout" rows="4">${e(SITE.aboutText)}</textarea></div><div><label>Visi</label><textarea id="edVision" rows="4">${e(SITE.visionText)}</textarea></div><div><label>Misi (satu poin per baris)</label><textarea id="edMission" rows="4">${e(SITE.missionText)}</textarea></div><div><label>Alamat kontak</label><textarea id="edContact" rows="4">${e(SITE.contactText)}</textarea></div></div></div>
+<div class="editor-panel"><h3>Keunggulan Pesantren</h3><p class="muted-note">Ubah judul, keterangan, ikon garis, dan warna setiap kartu.</p><div id="featureEditor">${SITE.features.map((f,i)=>editorRow('feature',f,i)).join('')}</div><div class="editor-actions"><button class="btn s" onclick="addEditorItem('feature')">Tambah Keunggulan</button></div></div>
+<div class="editor-panel"><h3>Program Unggulan</h3><p class="muted-note">Setiap program dapat memiliki ikon dan warna aksen sendiri.</p><div id="programEditor">${SITE.programs.map((f,i)=>editorRow('program',f,i)).join('')}</div><div class="editor-actions"><button class="btn s" onclick="addEditorItem('program')">Tambah Program</button></div></div>
+<div class="editor-panel"><h3>Pengumuman &amp; Agenda</h3><div id="newsEditor">${SITE.announcements.map((f,i)=>newsRow(f,i)).join('')}</div><div class="editor-actions"><button class="btn s" onclick="addNewsItem()">Tambah Pengumuman</button></div></div>
+<div class="editor-panel"><h3>Simpan &amp; Pindahkan Pengaturan</h3><p class="muted-note">Perubahan tersimpan di browser/perangkat admin ini. Untuk menerapkannya kepada semua pengunjung GitHub Pages, ekspor pengaturan lalu unggah file JSON yang dihasilkan ke repository atau gunakan layanan database/CMS terhubung.</p><div class="editor-actions"><button class="btn" onclick="saveEditor()">Simpan Perubahan</button><button class="btn o" onclick="exportSite()">Ekspor Pengaturan JSON</button><label class="btn r" style="display:inline-flex;align-items:center;cursor:pointer">Impor JSON<input type="file" accept="application/json" style="display:none" onchange="importSite(this)"></label></div></div></div>`}
+function iconOptions(sel){return Object.keys(ICONS).map(k=>`<option value="${k}" ${sel===k?'selected':''}>${k}</option>`).join('')}
+function editorRow(type,f,i){return `<div class="editor-item" data-type="${type}" data-index="${i}"><input aria-label="Judul" placeholder="Judul" value="${e(f.title)}"><input aria-label="Deskripsi" placeholder="Deskripsi" value="${e(f.desc)}"><select aria-label="Ikon">${iconOptions(f.icon)}</select><input aria-label="Warna" type="color" value="${/^#[0-9a-f]{6}$/i.test(f.color)?f.color:'#1b6542'}"><button class="btn r s" type="button" onclick="removeEditorItem(this)">Hapus</button></div>`}
+function newsRow(n,i){return `<div class="editor-item" data-index="${i}" style="grid-template-columns:100px 120px 1fr 1fr"><input placeholder="Label" value="${e(n.tag)}"><input placeholder="Keterangan" value="${e(n.meta)}"><input placeholder="Judul pengumuman" value="${e(n.title)}"><input placeholder="Isi pengumuman" value="${e(n.desc)}"><button class="btn r s" type="button" onclick="removeEditorItem(this)">Hapus</button></div>`}
+function addEditorItem(type){const arr=type==='feature'?SITE.features:SITE.programs;arr.push({title:'Judul baru',desc:'Keterangan fitur',icon:'book-open',color:'#1b6542'});T()}
+function addNewsItem(){SITE.announcements.push({tag:'INFO',meta:'Baru',title:'Judul pengumuman',desc:'Tulis informasi untuk pengunjung.'});T()}
+function removeEditorItem(btn){const row=btn.closest('.editor-item');const type=row.dataset.type;const idx=Number(row.dataset.index);if(type){(type==='feature'?SITE.features:SITE.programs).splice(idx,1)}else SITE.announcements.splice(idx,1);T()}
+function saveEditor(){SITE.heroTitle=$('#edHeroTitle').value;SITE.heroDesc=$('#edHeroDesc').value;SITE.heroEyebrow=$('#edHeroEyebrow').value;SITE.whyTitle=$('#edWhyTitle').value;SITE.programTitle=$('#edProgramTitle').value;SITE.newsTitle=$('#edNewsTitle').value;SITE.aboutText=$('#edAbout').value;SITE.visionText=$('#edVision').value;SITE.missionText=$('#edMission').value;SITE.contactText=$('#edContact').value;
+ const readRows=(id)=>[...document.querySelectorAll(`#${id} .editor-item`)].map(r=>{const a=r.querySelectorAll('input,select');return{title:a[0].value,desc:a[1].value,icon:a[2].value,color:a[3].value}});
+ SITE.features=readRows('featureEditor');SITE.programs=readRows('programEditor');SITE.announcements=[...document.querySelectorAll('#newsEditor .editor-item')].map(r=>{const a=r.querySelectorAll('input');return{tag:a[0].value,meta:a[1].value,title:a[2].value,desc:a[3].value}});sv('site_content',SITE);alert('Konten dan desain tersimpan di browser ini.');location.hash='beranda';}
+function exportSite(){const blob=new Blob([JSON.stringify(SITE,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='al-husna-konten-website.json';a.click();URL.revokeObjectURL(url)}
+function importSite(input){const file=input.files&&input.files[0];if(!file)return;const r=new FileReader();r.onload=()=>{try{const v=JSON.parse(r.result);if(!v.features||!v.programs||!v.announcements)throw Error('Format pengaturan tidak sesuai');SITE=v;sv('site_content',SITE);T();alert('Pengaturan berhasil diimpor.')}catch(err){alert('File JSON tidak valid atau strukturnya tidak sesuai.')}};r.readAsText(file)}
 const opt=(a,k,sel)=>a.map(x=>`<option value="${x.id}" ${x.id==sel?'selected':''}>${e(x.nama)}${k&&x.kelas?' — '+e(x.kelas):''}</option>`).join('');
 function pS(){return`<h3>Data Santri</h3><form class="noprint" onsubmit="return addS(this)"><div class="f2"><div><label>NIS</label><input name="nis" required></div><div><label>Nama</label><input name="nama" required></div><div><label>L/P</label><select name="jk"><option>L</option><option>P</option></select></div><div><label>Kelas</label><input name="kelas" required></div><div><label>TTL</label><input name="ttl"></div><div><label>Wali</label><input name="wali"></div></div><label>Alamat</label><input name="alamat"><br><button class="btn">+ Tambah Santri</button></form><br><div class="sc"><table><tr><th>NIS</th><th>Nama</th><th>L/P</th><th>Kelas</th><th>Wali</th><th></th></tr>${S.map(s=>`<tr><td>${e(s.nis)}</td><td>${e(s.nama)}</td><td>${e(s.jk)}</td><td>${e(s.kelas)}</td><td>${e(s.wali)}</td><td><button class="btn r s" onclick="del('santri',${s.id})">Hapus</button></td></tr>`).join('')}</table></div>`}
 function addS(f){const d=Object.fromEntries(new FormData(f));d.id=nid(S);S.push(d);sv('santri',S);R();return false}
