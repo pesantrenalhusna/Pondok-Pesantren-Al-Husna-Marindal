@@ -430,6 +430,51 @@ h1,h2,h3,h4{font-family:'Public Sans','Plus Jakarta Sans',sans-serif;letter-spac
 }
 </style>
 
+
+<style id="alh-arabic-compact-report">
+/* Rapor ringkas: komposisi tabel lebih sempit dan terpusat */
+.alh-report{padding:18px 12px!important}
+.report-title{font-size:17px!important;line-height:1.55!important;margin:10px auto 8px!important;text-align:center!important}
+.report-title .report-title-id{display:block;font-size:10px;font-weight:600;letter-spacing:.2px}
+.report-meta{width:82%!important;max-width:145mm!important;margin:0 auto 9px!important;font-size:10px!important;grid-template-columns:1fr 1fr!important}
+.report-table{width:74%!important;max-width:140mm!important;margin:0 auto!important;table-layout:fixed!important;font-size:8.4px!important;line-height:1.2!important}
+.report-table th,.report-table td{padding:3px 3px!important;overflow-wrap:anywhere!important;word-break:normal!important}
+.report-table th:nth-child(1),.report-table td:nth-child(1){width:5%!important}
+.report-table th:nth-child(2),.report-table td:nth-child(2){width:39%!important;text-align:left}
+.report-table th:nth-child(3),.report-table td:nth-child(3){width:9%!important}
+.report-table th:nth-child(4),.report-table td:nth-child(4){width:10%!important}
+.report-table th:nth-child(5),.report-table td:nth-child(5){width:14%!important}
+.report-table th:nth-child(6),.report-table td:nth-child(6){width:23%!important}
+.report-group td{font-size:8px!important;padding:3px 4px!important}
+.subject-name .arabic{font-size:8px!important;margin-top:1px!important}
+.report-attend{width:82%!important;max-width:145mm!important;margin:8px auto 0!important;font-size:9px!important;text-align:left!important}
+.report-sign{width:88%!important;max-width:155mm!important;margin:17mm auto 0!important;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5mm!important;text-align:center!important;font-size:9px!important;line-height:1.5!important}
+.report-sign .sign-role{font-weight:700;min-height:26px}
+.report-sign .sign-space{height:18mm}
+.report-sign .sign-name{font-weight:700}
+@media(max-width:650px){
+ .alh-report{overflow-x:hidden!important;padding:12px 5px!important}
+ .report-meta{width:90%!important;font-size:9px!important}
+ .report-table{width:88%!important;max-width:100%!important;font-size:7.5px!important}
+ .report-table th,.report-table td{padding:3px 2px!important}
+ .report-sign{width:94%!important;gap:2mm!important;font-size:8px!important;margin-top:12mm!important}
+ .report-sign .sign-space{height:14mm}
+}
+@media print{
+ .alh-report{padding:3mm 0!important;width:100%!important}
+ .report-title{font-size:11pt!important;margin:2mm auto 2mm!important}
+ .report-title .report-title-id{font-size:7pt!important}
+ .report-meta{width:82%!important;max-width:145mm!important;font-size:7pt!important;margin-bottom:2mm!important}
+ .report-table{width:74%!important;max-width:140mm!important;font-size:6.5pt!important;line-height:1.12!important}
+ .report-table th,.report-table td{padding:1mm .8mm!important}
+ .report-group td{font-size:6.3pt!important;padding:.9mm 1mm!important}
+ .subject-name .arabic{font-size:6.5pt!important}
+ .report-attend{width:82%!important;max-width:145mm!important;font-size:7pt!important;margin-top:2mm!important}
+ .report-sign{width:88%!important;max-width:155mm!important;margin:13mm auto 0!important;gap:4mm!important;font-size:7pt!important}
+ .report-sign .sign-space{height:16mm!important}
+}
+</style>
+
 </head><body>
 <div class="top"><span>Yayasan Pondok Pesantren Al-Husna</span><span>Portal Akademik &amp; Informasi Pesantren</span></div>
 <header><img src="logo.png" alt="Logo"><div class="br"><b>PONDOK PESANTREN AL-HUSNA</b><small>Pondok Pesantren · Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</small></div><a class="la" href="#admin">Login Admin ↗</a><button id="mb" onclick="$('#nav').classList.toggle('open')">☰</button></header>
@@ -655,15 +700,15 @@ function pR(){
  const st=S.find(x=>String(x.id)===String(id));if(!st)return'<div class="card">Santri tidak ditemukan.</div>';
  const n=N[alhScoreKey(id,sm)]||{},groupOrder=['Nasional','Keagamaan','Bahasa'];
  const grade=v=>v==null||v===''?'':Number(v)>=90?'ممتاز':Number(v)>=80?'جيد جداً':Number(v)>=70?'جيد':'مقبول';
- const rows=groupOrder.map((group,gi)=>{const ms=ALH_MAPELS.filter(m=>m.kat===group);if(!ms.length)return'';return `<tr class="report-group"><td colspan="6">${gi===0?'A. KURIKULUM NASIONAL':gi===1?'B. KURIKULUM PESANTREN – ILMU KEAGAMAAN':'C. KURIKULUM PESANTREN – ILMU BAHASA'}</td></tr>`+ms.map((m,i)=>{const v=n[m.nama]??'',g=grade(v);return `<tr><td>${i+1}</td><td class="subject-name">${e(m.nama)}<span class="arabic">${e(m.ar)}</span></td><td>${m.kkm}</td><td>${v===''?'—':v}</td><td>${g||'—'}</td><td>${v===''?'Belum diisi':Number(v)>=m.kkm?'ناجح / Tuntas':'يحتاج إلى تحسين / Belum tuntas'}</td></tr>`}).join('')}).join('');
+ const rows=groupOrder.map((group,gi)=>{const ms=ALH_MAPELS.filter(m=>m.kat===group);if(!ms.length)return'';return `<tr class="report-group"><td colspan="6">${gi===0?'أ. الْمَنْهَجُ الْوَطَنِيُّ — KURIKULUM NASIONAL':gi===1?'ب. مَنْهَجُ الْمَعْهَدِ — الْعُلُومُ الشَّرْعِيَّةُ':'ج. مَنْهَجُ الْمَعْهَدِ — عُلُومُ اللُّغَةِ'}</td></tr>`+ms.map((m,i)=>{const v=n[m.nama]??'',g=grade(v);return `<tr><td>${i+1}</td><td class="subject-name">${e(m.nama)}<span class="arabic">${e(m.ar)}</span></td><td>${m.kkm}</td><td>${v===''?'—':v}</td><td>${g||'—'}</td><td>${v===''?'Belum diisi':Number(v)>=m.kkm?'ناجح / Tuntas':'يحتاج إلى تحسين / Belum tuntas'}</td></tr>`}).join('')}).join('');
  const vals=ALH_MAPELS.map(m=>n[m.nama]).filter(v=>v!==''&&v!=null&&Number.isFinite(Number(v))).map(Number),avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
  const h=Object.keys(A).filter(k=>k.startsWith('santri')).reduce((c,k)=>{const v=(A[k]||{})[id];if(v)c[v]=(c[v]||0)+1;return c},{});
  return `<div class="noprint f2"><div><label>Pilih Santri</label><select onchange="selRap=this.value;R()">${S.map(x=>`<option value="${x.id}" ${String(x.id)===String(id)?'selected':''}>${e(x.nama)} – ${e(x.kelas)}</option>`).join('')}</select></div><div><label>Semester / Tahun Ajaran</label><input value="${e(sm)}" onchange="window.sem=this.value;R()"></div><div><button class="btn o" onclick="print()">Cetak Raport / PDF</button></div></div>
  <section class="alh-report"><header class="alh-report-head"><img src="logo.png"><div><h2>PONDOK PESANTREN AL-HUSNA MARINDAL</h2><b>TARBIYATUL MU’ALLIMIN AL-ISLAMIYAH</b><p>Marindal I, Patumbak, Deli Serdang, Sumatera Utara</p></div></header>
- <h3 class="report-title">LAPORAN HASIL BELAJAR SANTRI</h3><div class="report-meta"><span>Nama Santri: <b>${e(st.nama)}</b></span><span>NIS: <b>${e(st.nis)}</b></span><span>Kelas: <b>${e(st.kelas)}</b></span><span>Semester: <b>${e(sm)}</b></span></div>
- <table class="report-table"><thead><tr><th>No.</th><th>Mata Pelajaran / المادة الدراسية</th><th>KKM</th><th>Nilai</th><th>Predikat</th><th>Keterangan</th></tr></thead><tbody>${rows}<tr class="report-total"><td colspan="3">Rata-rata Nilai / المعدل</td><td>${avg}</td><td colspan="2"></td></tr></tbody></table>
- <p class="report-attend">Kehadiran: Hadir ${h.H||0} · Izin ${h.I||0} · Sakit ${h.S||0} · Alpa ${h.A||0}</p>
- <div class="report-sign"><div>Orang Tua / Wali<br><br><br><b>( ${e(st.wali||'........................')} )</b></div><div>Marindal, ${new Date().toLocaleDateString('id-ID')}<br>Kepala Pondok<br><br><br><b>( ................................. )</b></div></div></section>`;
+ <h3 class="report-title" dir="rtl">كَشْفُ دَرَجَاتِ التَّحْصِيلِ الدِّرَاسِيِّ لِلطَّالِبِ<span class="report-title-id" dir="ltr">LAPORAN HASIL BELAJAR SANTRI</span></h3><div class="report-meta"><span dir="rtl">اسم الطالب: <b>${e(st.nama)}</b></span><span dir="rtl">رقم الطالب: <b>${e(st.nis)}</b></span><span dir="rtl">الفصل: <b>${e(st.kelas)}</b></span><span dir="rtl">الفصل الدراسي: <b>${e(sm)}</b></span></div>
+ <table class="report-table"><thead><tr><th>الرقم</th><th>المادة الدراسية</th><th>الحد الأدنى</th><th>الدرجة</th><th>التقدير</th><th>الملاحظات</th></tr></thead><tbody>${rows}<tr class="report-total"><td colspan="3" dir="rtl">المُعَدَّلُ الْعَامُّ / Rata-rata Nilai</td><td>${avg}</td><td colspan="2"></td></tr></tbody></table>
+ <p class="report-attend" dir="rtl">الْمُوَاظَبَةُ: الحُضُورُ ${h.H||0} · الإِذْنُ ${h.I||0} · الْمَرَضُ ${h.S||0} · الْغِيَابُ ${h.A||0}<br><span dir="ltr">Kehadiran: Hadir ${h.H||0} · Izin ${h.I||0} · Sakit ${h.S||0} · Alpa ${h.A||0}</span></p>
+ <div class="report-sign"><div><div class="sign-role" dir="rtl">وَلِيُّ الطَّالِبِ<br>Wali Santri</div><div class="sign-space"></div><div class="sign-name">( ${e(st.wali||'........................')} )</div></div><div><div class="sign-role" dir="rtl">رَئِيسُ الْفَصْلِ<br>Wali Kelas</div><div class="sign-space"></div><div class="sign-name">( ................................ )</div></div><div><div class="sign-role" dir="rtl">مُدِيرُ الْمَعْهَدِ<br>Pimpinan Pondok Pesantren Al-Husna</div><div class="sign-space"></div><div class="sign-name">( ................................ )</div></div></div></section>`;
 }
 function alhAdminReportOverview(){
  const terms=[...new Set(Object.keys(N).map(k=>k.replace(/^\d+/,'')).filter(Boolean))];

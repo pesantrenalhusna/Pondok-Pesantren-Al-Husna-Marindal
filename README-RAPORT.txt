@@ -46,3 +46,9 @@ PEMBARUAN TAMPILAN KOLOM RAPOR:
 - Tabel rapor dibuat lebih ringkas dan dipusatkan, dengan lebar sekitar 90% area cetak A4 (maksimal 170 mm), mengikuti contoh yang dikirim.
 - Proporsi kolom tetap: nomor kecil, mata pelajaran paling luas, dan kolom KKM/nilai/predikat/keterangan lebih hemat ruang.
 - Pada tampilan HP, tabel tetap menyesuaikan lebar layar.
+
+PEMBARUAN RAPOR ARAB & KOLOM RINGKAS:
+- Tabel dipersempit menjadi 74% lebar area cetak, maksimal 140 mm, dan dipusatkan pada kertas A4 portrait.
+- Judul utama, identitas santri, judul kolom, kategori kurikulum, rata-rata, dan kehadiran menggunakan bahasa Arab dengan keterangan Indonesia seperlunya.
+- Area tanda tangan memuat tiga pihak: Wali Santri, Wali Kelas, dan Pimpinan Pondok Pesantren Al-Husna.
+- Ruang tanda tangan disediakan; nama wali santri mengikuti data santri, sedangkan wali kelas dan pimpinan dapat menandatangani secara manual.
