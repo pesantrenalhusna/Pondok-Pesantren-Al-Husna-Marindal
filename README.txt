@@ -2,7 +2,7 @@ PANDUAN FITUR AKADEMIK — PONDOK PESANTREN AL-HUSNA
 
 A. PEMASANGAN
 1. Ekstrak ZIP.
-2. Upload seluruh isi folder ke root repositori GitHub Pages (index.html, logo.png, dan dua gambar .webp).
+2. Upload seluruh isi folder ke root repositori GitHub Pages (index.html, spp.js, logo.png, dan dua gambar .webp).
 3. Commit changes dan tunggu GitHub Pages selesai deploy.
 4. Buka website, login admin, lalu masuk ke tab Data Santri dan Data Guru.
 
@@ -83,7 +83,7 @@ Unduh template dari Portal Guru setelah memilih kelas. Jangan mengubah judul kol
 
 
 PEMBARUAN MODUL AKADEMIK (VERSI IMPOR & PROFIL GURU)
-- Admin > Data Santri: unduh template Excel dan impor data santri secara massal. Kolom: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali. NIS yang sudah ada akan diperbarui.
+- Admin > Data Santri: unduh template Excel dan impor data santri secara massal. Kolom: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali, Jenjang (opsional: MIS/SMP/SMA; kosong = dideteksi dari kelas). NIS yang sudah ada akan diperbarui.
 - Admin > Data Guru: unduh template dan impor guru massal. Kolom wajib: NIP, Nama, No HP. Mapel, Kelas Diajar, Wali Kelas dipisahkan titik koma.
 - Login guru menggunakan nomor HP dan password. Admin dapat mengubah nomor HP, penugasan mapel/kelas, kelas wali, dan password di Data Guru.
 - Guru dapat memilih beberapa mapel dan beberapa kelas sesuai penugasan untuk memasukkan atau mengimpor nilai.
@@ -98,3 +98,6 @@ FORMAT TEMPLATE
 - Template impor santri: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali.
 - Template impor guru: NIP, Nama, No HP, Mata Pelajaran, Kelas Diajar, Wali Kelas, Password, Pendidikan, Jabatan, Bio, Foto URL.
 - Nilai guru: NIS, Nama Santri, Kelas, Nilai (0–100).
+
+PEMBAYARAN SPP (MIS, SMP, SMA)
+Lihat README-SPP.txt. File baru: spp.js. Menu baru: Portal Wali (publik) dan Admin > Pembayaran SPP.

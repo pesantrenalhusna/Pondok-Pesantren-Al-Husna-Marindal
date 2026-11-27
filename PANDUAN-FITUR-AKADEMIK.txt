@@ -2,7 +2,7 @@ PANDUAN FITUR AKADEMIK — PONDOK PESANTREN AL-HUSNA
 
 A. PEMASANGAN
 1. Ekstrak ZIP.
-2. Upload seluruh isi folder ke root repositori GitHub Pages (index.html, logo.png, dan dua gambar .webp).
+2. Upload seluruh isi folder ke root repositori GitHub Pages (index.html, spp.js, logo.png, dan dua gambar .webp).
 3. Commit changes dan tunggu GitHub Pages selesai deploy.
 4. Buka website, login admin, lalu masuk ke tab Data Santri dan Data Guru.
 

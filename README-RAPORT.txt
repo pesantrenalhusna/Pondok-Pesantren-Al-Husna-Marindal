@@ -26,7 +26,7 @@ Unduh template dari Portal Guru setelah memilih kelas. Jangan mengubah judul kol
 
 
 PEMBARUAN MODUL AKADEMIK (VERSI IMPOR & PROFIL GURU)
-- Admin > Data Santri: unduh template Excel dan impor data santri secara massal. Kolom: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali. NIS yang sudah ada akan diperbarui.
+- Admin > Data Santri: unduh template Excel dan impor data santri secara massal. Kolom: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali, Jenjang (opsional: MIS/SMP/SMA; kosong = dideteksi dari kelas). NIS yang sudah ada akan diperbarui.
 - Admin > Data Guru: unduh template dan impor guru massal. Kolom wajib: NIP, Nama, No HP. Mapel, Kelas Diajar, Wali Kelas dipisahkan titik koma.
 - Login guru menggunakan nomor HP dan password. Admin dapat mengubah nomor HP, penugasan mapel/kelas, kelas wali, dan password di Data Guru.
 - Guru dapat memilih beberapa mapel dan beberapa kelas sesuai penugasan untuk memasukkan atau mengimpor nilai.
