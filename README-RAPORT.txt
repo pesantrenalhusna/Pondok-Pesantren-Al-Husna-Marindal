@@ -41,3 +41,8 @@ FORMAT TEMPLATE
 - Template impor santri: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali.
 - Template impor guru: NIP, Nama, No HP, Mata Pelajaran, Kelas Diajar, Wali Kelas, Password, Pendidikan, Jabatan, Bio, Foto URL.
 - Nilai guru: NIS, Nama Santri, Kelas, Nilai (0–100).
+
+PEMBARUAN TAMPILAN KOLOM RAPOR:
+- Tabel rapor dibuat lebih ringkas dan dipusatkan, dengan lebar sekitar 90% area cetak A4 (maksimal 170 mm), mengikuti contoh yang dikirim.
+- Proporsi kolom tetap: nomor kecil, mata pelajaran paling luas, dan kolom KKM/nilai/predikat/keterangan lebih hemat ruang.
+- Pada tampilan HP, tabel tetap menyesuaikan lebar layar.
