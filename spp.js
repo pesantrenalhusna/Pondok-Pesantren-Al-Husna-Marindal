@@ -383,10 +383,10 @@ function pSPP() {
   const cfg = sppCfg(), bills = sppLoad('tagihan', []), pays = sppLoad('bayar', []);
   if (!sppF.ta) sppF.ta = cfg.tahunAjaran;
   const pend = pays.filter(p => p.status === 'Menunggu Verifikasi').length, pw = sppLoad('wali', []).filter(a => a.status === 'Menunggu' || (a.anakReq || []).length).length;
-  const subs = [['ringkas', 'Ringkasan'], ['tagihan', 'Tagihan & Status'], ['verif', 'Verifikasi' + (pend ? ' (' + pend + ')' : '')], ['atur', 'Pengaturan & Tarif'], ['akses', 'Akun Wali' + (pw ? ' (' + pw + ')' : '')]];
+  const subs = [['ringkas', 'Ringkasan'], ['tagihan', 'Tagihan & Status'], ['impor', 'Impor Excel'], ['verif', 'Verifikasi' + (pend ? ' (' + pend + ')' : '')], ['atur', 'Pengaturan & Tarif'], ['akses', 'Akun Wali' + (pw ? ' (' + pw + ')' : '')]];
   const nav = `<div class="tabs noprint">${subs.map(t => `<button class="${sppSub === t[0] ? 'on' : ''}" onclick="sppSub='${t[0]}';T()">${t[1]}</button>`).join('')}</div>`;
   const banner = `<div class="spp-warn noprint"><b>Mode penyimpanan: browser.</b> Data SPP tersimpan di perangkat ini saja. Wali yang membuka website dari HP lain <u>tidak</u> akan melihat data ini sampai website dihubungkan ke database (lihat README-SPP.txt).</div>`;
-  const pg = ({ ringkas: sppTabRingkas, tagihan: sppTabTagihan, verif: sppTabVerif, atur: sppTabAtur, akses: sppTabAkses }[sppSub] || sppTabRingkas)(cfg, bills, pays);
+  const pg = ({ ringkas: sppTabRingkas, tagihan: sppTabTagihan, impor: sppTabImpor, verif: sppTabVerif, atur: sppTabAtur, akses: sppTabAkses }[sppSub] || sppTabRingkas)(cfg, bills, pays);
   return `<h3>Pembayaran SPP</h3>${banner}${nav}${pg}`;
 }
 function sppTaSelect() {
@@ -550,10 +550,10 @@ function sppRestore(input) {
 
 /* --- Akun wali --- */
 function sppRandPin() { const a = new Uint32Array(1); crypto.getRandomValues(a); return String(a[0] % 1000000).padStart(6, '0'); }
-function sppAnakInfo(nis) { const s = S.find(x => String(x.nis).trim() === String(nis).trim()); return s ? `<b>${e(s.nama)}</b> (${e(s.kelas)}, ${e(sppJenjang(s) || '-')}) · wali tercatat: ${e(s.wali || '-')}` : `<span style="color:#a11a1a">NIS ${e(nis)} tidak ditemukan</span>`; }
+function sppAnakInfo(nis, hp) { const s = S.find(x => String(x.nis).trim() === String(nis).trim()); const hpNote = s && s.hpWali ? (sppPhone(s.hpWali) === hp ? ' · <span style="color:#07692f">✓ HP sesuai data santri</span>' : ' · <span style="color:#a11a1a">HP berbeda dari data santri</span>') : ''; return s ? `<b>${e(s.nama)}</b> (${e(s.kelas)}, ${e(sppJenjang(s) || '-')}) · wali tercatat: ${e(s.wali || '-')}${hpNote}` : `<span style="color:#a11a1a">NIS ${e(nis)} tidak ditemukan</span>`; }
 function sppTabAkses() {
   const list = sppLoad('wali', []), pend = list.filter(a => a.status === 'Menunggu' || (a.anakReq || []).length);
-  const pRows = pend.map(a => `<tr><td><b>${e(a.nama)}</b><br><small>${e(a.hp)}</small><br><small>${a.status === 'Menunggu' ? 'Akun baru' : 'Tambah anak'} · ${sppFmtDate(a.createdAt)}</small></td><td style="white-space:normal">${(a.anakReq || []).map(n => '• ' + sppAnakInfo(n)).join('<br>')}</td><td><button class="btn s" onclick="sppWaliApprove('${a.id}')">Setujui</button> <button class="btn s r" onclick="sppWaliRejectReq('${a.id}')">Tolak</button></td></tr>`).join('');
+  const pRows = pend.map(a => `<tr><td><b>${e(a.nama)}</b><br><small>${e(a.hp)}</small><br><small>${a.status === 'Menunggu' ? 'Akun baru' : 'Tambah anak'} · ${sppFmtDate(a.createdAt)}</small></td><td style="white-space:normal">${(a.anakReq || []).map(n => '• ' + sppAnakInfo(n, a.hp)).join('<br>')}</td><td><button class="btn s" onclick="sppWaliApprove('${a.id}')">Setujui</button> <button class="btn s r" onclick="sppWaliRejectReq('${a.id}')">Tolak</button></td></tr>`).join('');
   const rows = list.map(a => `<tr><td><b>${e(a.nama)}</b><br><small>${e(a.hp)}</small></td><td style="white-space:normal">${(a.anak || []).map(id => { const s = sppSantri(id); return s ? `${e(s.nama)} <span class="spp-badge j-${sppJenjang(s)}">${e(sppJenjang(s) || '-')}</span> <a href="#" title="Lepas" onclick="sppWaliDelAnak('${a.id}','${id}');return false">✕</a>` : ''; }).join('<br>') || '<small>-</small>'}</td><td>${e(a.status)}</td><td><button class="btn s o" onclick="sppWaliReset('${a.id}')">Reset password</button> <button class="btn s o" onclick="sppWaliAddAnak('${a.id}')">+ Anak</button> <button class="btn s o" onclick="sppWaliToggle('${a.id}')">${a.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}</button> <button class="btn s r" onclick="sppWaliDel('${a.id}')">Hapus</button></td></tr>`).join('');
   return `<p class="muted-note">Wali mendaftar sendiri di menu <b>Portal Wali</b> memakai nomor HP, password, dan NIS anak. Periksa kesesuaian data (nama wali dan anak) sebelum menyetujui. Jika wali lupa password, gunakan <b>Reset password</b> lalu kirimkan password baru ke wali.</p>
 <h4>Menunggu verifikasi (${pend.length})</h4><div class="sc"><table><tr><th>Pendaftar</th><th>Anak yang diajukan (NIS)</th><th></th></tr>${pRows || '<tr><td colspan="3">Tidak ada pendaftaran baru.</td></tr>'}</table></div>
@@ -590,6 +590,179 @@ function sppWaliAddAnak(id) {
   const s = S.find(x => String(x.nis).trim() === nis.trim()); if (!s) { alert('NIS tidak ditemukan.'); return; }
   const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return;
   a.anak = [...new Set([...(a.anak || []).map(String), String(s.id)])]; if (sppWaliSave(list)) T();
+}
+
+/* --- Impor Excel: data santri + pembayaran --- */
+const SPP_IMP = { parsed: null, nama: '', opts: { baru: true }, err: '' };
+const SPP_MON3 = { jul: 0, agu: 1, agt: 1, sep: 2, okt: 3, nov: 4, nop: 4, des: 5, dec: 5, jan: 6, feb: 7, mar: 8, apr: 9, mei: 10, may: 10, jun: 11 };
+function sppHeaderKind(h) {
+  const t = String(h == null ? '' : h).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim(); if (!t) return null;
+  if (/^(nis|nisn|no induk|nomor induk)( santri)?$/.test(t)) return { k: 'nis' };
+  if (/wali/.test(t) && /\b(hp|telp|telepon|wa|whatsapp|no|nomor)\b/.test(t)) return { k: 'hp' };
+  if (/wali/.test(t)) return { k: 'wali' };
+  if (/^(nama|nama santri|nama lengkap)$/.test(t)) return { k: 'nama' };
+  if (/^kelas/.test(t)) return { k: 'kelas' };
+  if (/^(jenjang|unit|tingkat)/.test(t)) return { k: 'jenjang' };
+  if (/^(tarif|spp|nominal)/.test(t)) return { k: 'tarif' };
+  const m3 = t.slice(0, 3); if (m3 in SPP_MON3 && /^[a-z]{3,9}( |$)/.test(t)) return { k: 'm', i: SPP_MON3[m3] };
+  return null;
+}
+function sppNormJenjang(v) {
+  const t = String(v || '').toUpperCase().replace(/[^A-Z]/g, '');
+  if (['MIS', 'MI', 'SD', 'MISD'].includes(t)) return 'MIS'; if (['SMP', 'MTS', 'MTSS'].includes(t)) return 'SMP'; if (['SMA', 'MA', 'SMK', 'MAS'].includes(t)) return 'SMA'; return '';
+}
+function sppParseCell(v) {
+  if (v instanceof Date && !isNaN(v)) return { t: 'lunas', date: v };
+  if (typeof v === 'number') return v > 0 ? { t: 'amt', amt: v } : { t: 'belum' };
+  const s = String(v == null ? '' : v).trim().toLowerCase(); if (!s) return { t: 'belum' };
+  if (/^(-|—|–|n\/?a|tidak ada|bebas|gratis|beasiswa)$/.test(s)) return { t: 'none' };
+  if (/^(lunas|l|v|✓|✔|√|ok|bayar|sudah|sudah bayar|paid|ya|y)$/.test(s)) return { t: 'lunas' };
+  if (/^(belum|belum bayar|b|tidak|tdk|n|0)$/.test(s)) return { t: 'belum' };
+  let m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if (m) { const y = Number(m[3]) < 100 ? 2000 + Number(m[3]) : Number(m[3]), d = new Date(y, Number(m[2]) - 1, Number(m[1]), 12); if (!isNaN(d)) return { t: 'lunas', date: d }; }
+  if (/^(rp\.?\s*)?[0-9][0-9.,]*$/.test(s)) { const n = Number(s.replace(/^rp\.?\s*/, '').replace(/[.,]/g, '')); return n > 0 ? { t: 'amt', amt: n } : { t: 'belum' }; }
+  return { t: 'unk', raw: String(v) };
+}
+function sppImportParse(aoa) {
+  let hi = -1, cols = null;
+  for (let r = 0; r < Math.min(aoa.length, 15); r++) {
+    const c = {}, mon = {}; (aoa[r] || []).forEach((h, ci) => { const k = sppHeaderKind(h); if (!k) return; if (k.k === 'm') { if (!(k.i in mon)) mon[k.i] = ci; } else if (!(k.k in c)) c[k.k] = ci; });
+    if ('nis' in c && ('nama' in c || Object.keys(mon).length)) { hi = r; cols = Object.assign(c, { mon }); break; }
+  }
+  if (hi < 0) return { error: 'Baris judul kolom tidak ditemukan. Pastikan ada kolom NIS dan Nama (gunakan template).' };
+  const g = (row, k) => k in cols ? String(row[cols[k]] == null ? '' : row[cols[k]]).trim() : '';
+  const rows = [], skipped = [];
+  for (let r = hi + 1; r < aoa.length; r++) {
+    const row = aoa[r] || []; if (!row.some(x => String(x == null ? '' : x).trim() !== '')) continue;
+    const nis = g(row, 'nis'), nama = g(row, 'nama');
+    if (/^(total|jumlah)/i.test(nis) || /^(total|jumlah)/i.test(nama)) continue;
+    if (!nis) { skipped.push(`Baris ${r + 1}: NIS kosong (${nama || 'tanpa nama'}), dilewati`); continue; }
+    const months = {}; Object.keys(cols.mon).forEach(i => { months[i] = sppParseCell(row[cols.mon[i]]); });
+    const tarif = Number(String(g(row, 'tarif')).replace(/[^0-9]/g, '')) || 0;
+    rows.push({ row: r + 1, nis, nama, kelas: g(row, 'kelas'), jenjang: sppNormJenjang(g(row, 'jenjang')), wali: g(row, 'wali'), hp: g(row, 'hp'), tarif, months });
+  }
+  return { rows, skipped, hasMon: Object.keys(cols.mon).length > 0, nMon: Object.keys(cols.mon).length };
+}
+function sppImportApply(parsed, ta, opts, dry) {
+  const cfg = sppCfg(), Sx = JSON.parse(JSON.stringify(S)), bills = sppLoad('tagihan', []), pays = sppLoad('bayar', []), months = sppMonths(ta);
+  const have = new Map(bills.map(b => [String(b.sid) + '|' + b.ym, b]));
+  const sum = { rows: 0, santriBaru: 0, santriUbah: 0, tagihanBaru: 0, lunasBaru: 0, sudahLunas: 0, menunggu: 0, konflik: 0, dilewati: 0, nominal: 0 };
+  const warn = (parsed.skipped || []).slice(); sum.dilewati += warn.length;
+  let nid = Math.max(0, ...Sx.map(x => Number(x.id) || 0)) + 1;
+  const jenjangPerNis = {};
+  parsed.rows.forEach(rw => {
+    let s = Sx.find(x => String(x.nis).trim() === rw.nis);
+    if (!s) {
+      if (!opts.baru) { warn.push(`Baris ${rw.row}: NIS ${rw.nis} belum ada di Data Santri, dilewati`); sum.dilewati++; return; }
+      if (!rw.nama) { warn.push(`Baris ${rw.row}: NIS ${rw.nis} baru tetapi nama kosong, dilewati`); sum.dilewati++; return; }
+      s = { id: nid++, nis: rw.nis, nama: rw.nama, jk: '', kelas: rw.kelas, ttl: '', alamat: '', wali: rw.wali }; if (rw.jenjang) s.jenjang = rw.jenjang; if (rw.hp) s.hpWali = rw.hp;
+      Sx.push(s); sum.santriBaru++;
+    } else {
+      let ch = false;
+      [['nama', rw.nama], ['kelas', rw.kelas], ['wali', rw.wali], ['jenjang', rw.jenjang], ['hpWali', rw.hp]].forEach(([k, v]) => { if (v && s[k] !== v) { s[k] = v; ch = true; } });
+      if (ch) sum.santriUbah++;
+    }
+    sum.rows++;
+    const j = sppJenjang(s), tarif = rw.tarif > 0 ? rw.tarif : Number(cfg.tarif[j]) || 0;
+    if (!j) { warn.push(`Baris ${rw.row}: jenjang ${s.nama} tidak dikenali (isi kolom Jenjang), tagihan dilewati`); sum.dilewati++; return; }
+    if (!(tarif > 0)) { warn.push(`Baris ${rw.row}: tarif ${j} belum diisi (Pengaturan & Tarif) atau kolom Tarif kosong, tagihan dilewati`); sum.dilewati++; return; }
+    const groups = new Map();
+    const target = parsed.hasMon ? months.filter(m => rw.months[m.i] !== undefined) : months;
+    target.forEach(m => {
+      const c = parsed.hasMon ? rw.months[m.i] : { t: 'belum' }, key = String(s.id) + '|' + m.ym; let b = have.get(key);
+      if (c.t === 'none') return;
+      const mk = () => { b = { id: sppUid('b_'), sid: s.id, ym: m.ym, ta, jenjang: j, nominal: tarif, status: 'Belum', payId: null }; bills.push(b); have.set(key, b); sum.tagihanBaru++; };
+      if (c.t === 'unk') { warn.push(`Baris ${rw.row} ${m.label}: isi “${c.raw}” tidak dikenali, bulan ini dilewati`); sum.dilewati++; return; }
+      if (c.t === 'belum') { if (!b) mk(); else if (b.status === 'Lunas') { sum.konflik++; } return; }
+      if (c.t === 'amt' && c.amt < tarif) { if (!b) mk(); warn.push(`Baris ${rw.row} ${m.label}: dibayar ${sppRp(c.amt)} kurang dari tarif ${sppRp(tarif)}, tetap Belum (cicilan belum didukung)`); return; }
+      if (!b) mk();
+      if (b.status === 'Lunas') { sum.sudahLunas++; return; }
+      if (b.status === 'Menunggu') { sum.menunggu++; warn.push(`Baris ${rw.row} ${m.label}: sedang menunggu verifikasi pembayaran wali, verifikasi lewat tab Verifikasi`); return; }
+      const when = c.date ? new Date(c.date.getTime()) : null, gk = when ? when.toISOString().slice(0, 10) : 'x';
+      if (!groups.has(gk)) groups.set(gk, { when, list: [] }); groups.get(gk).list.push(b);
+    });
+    groups.forEach(gr => {
+      const now = (gr.when || new Date()).toISOString(), tot = gr.list.reduce((a, b) => a + Number(b.nominal), 0);
+      const p = { id: sppInvoiceNo(pays), sid: s.id, jenjang: j, billIds: gr.list.map(b => b.id), subtotal: tot, unik: 0, total: tot, metode: 'Impor Excel', status: 'Lunas', bukti: '', createdAt: now, paidAt: now, verifiedAt: now, oleh: 'Impor', catatan: 'Dicatat dari impor Excel' };
+      pays.push(p); gr.list.forEach(b => { b.status = 'Lunas'; b.payId = p.id; b.paidAt = now; b.metode = 'Impor Excel'; }); sum.lunasBaru += gr.list.length; sum.nominal += tot;
+    });
+  });
+  if (!dry) {
+    sv('santri', Sx); S = Sx;
+    sppSave('tagihan', bills); sppSave('bayar', pays);
+  }
+  return { sum, warn };
+}
+function sppXlsxRows(file, cb) {
+  if (!sppXlsxOk()) return; const fr = new FileReader();
+  fr.onerror = () => alert('Gagal membaca file.');
+  fr.onload = ev => {
+    try {
+      const wb = XLSX.read(ev.target.result, { type: 'array', cellDates: true }), nm = wb.SheetNames.find(n => /spp/i.test(n)) || wb.SheetNames[0];
+      cb(XLSX.utils.sheet_to_json(wb.Sheets[nm], { header: 1, defval: '', raw: true }));
+    } catch (x) { alert('File Excel tidak dapat dibaca: ' + x.message); }
+  };
+  fr.readAsArrayBuffer(file);
+}
+function sppImportRead(input) {
+  const f = input.files && input.files[0]; if (!f) return; SPP_IMP.err = '';
+  sppXlsxRows(f, aoa => {
+    const r = sppImportParse(aoa); input.value = '';
+    if (r.error) { SPP_IMP.parsed = null; SPP_IMP.err = r.error; } else if (!r.rows.length) { SPP_IMP.parsed = null; SPP_IMP.err = 'Tidak ada baris santri yang terbaca.'; } else { SPP_IMP.parsed = r; SPP_IMP.nama = f.name; }
+    T();
+  });
+}
+function sppImportCommit() {
+  if (!SPP_IMP.parsed) return;
+  if (!confirm('Terapkan impor ke data santri, tagihan, dan pembayaran?')) return;
+  const r = sppImportApply(SPP_IMP.parsed, sppF.ta, SPP_IMP.opts, false), x = r.sum;
+  SPP_IMP.parsed = null; alert(`Impor selesai.\nSantri baru: ${x.santriBaru}, diperbarui: ${x.santriUbah}\nTagihan baru: ${x.tagihanBaru}\nDitandai lunas: ${x.lunasBaru} bulan (${sppRp(x.nominal)})`); T();
+}
+function sppImportCancel() { SPP_IMP.parsed = null; SPP_IMP.err = ''; T(); }
+function sppTabImpor(cfg) {
+  const p = SPP_IMP.parsed, res = p ? sppImportApply(p, sppF.ta, SPP_IMP.opts, true) : null;
+  let prev = '';
+  if (res) {
+    const x = res.sum, cell = (l, v, c) => `<div class="${c || ''}"><small>${l}</small><b>${v}</b></div>`;
+    prev = `<div class="card" style="margin-top:14px;border:2px solid var(--y)"><h4>Pratinjau: ${e(SPP_IMP.nama)} · TA ${sppTaLabel(sppF.ta)}</h4><p class="muted-note">Belum ada yang disimpan. Periksa ringkasan di bawah, lalu klik “Terapkan Impor”.</p>
+<div class="spp-sum">${cell('Baris santri terbaca', x.rows)}${cell('Santri baru', x.santriBaru)}${cell('Santri diperbarui', x.santriUbah)}${cell('Tagihan baru', x.tagihanBaru)}${cell('Ditandai lunas', x.lunasBaru + ' bulan<br><small>' + sppRp(x.nominal) + '</small>', '')}${cell('Sudah lunas sebelumnya', x.sudahLunas)}${cell('Perlu perhatian', res.warn.length, res.warn.length ? 'wt' : '')}</div>
+${res.warn.length ? `<div class="spp-warn"><b>Catatan (${res.warn.length}):</b><ul style="margin:6px 0 0 18px">${res.warn.slice(0, 40).map(w => `<li>${e(w)}</li>`).join('')}</ul>${res.warn.length > 40 ? `<small>…dan ${res.warn.length - 40} lainnya</small>` : ''}</div>` : ''}
+<button class="btn" onclick="sppImportCommit()">Terapkan Impor</button> <button class="btn o" onclick="sppImportCancel()">Batal</button></div>`;
+  }
+  return `<div class="card"><h4>Impor Data Santri & Pembayaran dari Excel</h4>
+<p class="muted-note">Bendahara cukup mengisi satu file: satu baris per santri, kolom bulan berisi status pembayarannya. Setelah diimpor, tagihan langsung terbaca di Portal Wali dan wali tinggal membayar bulan yang belum lunas.</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn" onclick="sppDownloadTemplate()">1. Unduh Template</button><button class="btn o" onclick="sppExportFormatImpor()">Unduh Data Saat Ini (format sama)</button></div>
+<div class="f2" style="align-items:end"><div><label>2. Tahun ajaran yang diimpor</label>${sppTaSelect()}</div><div><label>3. Pilih file Excel (.xlsx)</label><input type="file" accept=".xlsx,.xls,.csv" onchange="sppImportRead(this)"></div></div>
+<label style="display:flex;gap:8px;align-items:center;margin-top:8px"><input type="checkbox" style="width:auto" ${SPP_IMP.opts.baru ? 'checked' : ''} onchange="SPP_IMP.opts.baru=this.checked;T()"> Tambahkan santri baru jika NIS belum ada di Data Santri</label>
+${SPP_IMP.err ? `<div class="spp-warn" style="background:#fde4e4;border-color:#f1b0b0;color:#8a1a1a">${e(SPP_IMP.err)}</div>` : ''}</div>${prev}
+<div class="card" style="margin-top:14px"><h4>Aturan pengisian</h4><ul style="margin:0 0 0 18px;line-height:1.7">
+<li><b>NIS</b> wajib. Kolom lain: Nama, Kelas, Jenjang (MIS/SMP/SMA), Wali, No HP Wali, Tarif/Bulan (opsional), lalu kolom bulan <b>Juli … Juni</b>.</li>
+<li>Jenjang kosong → dideteksi dari kelas. Tarif kosong → memakai tarif jenjang di Pengaturan & Tarif.</li>
+<li>Isi kolom bulan: <b>Lunas</b> (atau ✓), <b>angka</b> nominal yang dibayar, atau <b>tanggal bayar</b> → dicatat lunas. Kosong atau “Belum” → tagihan belum dibayar. Tanda <b>-</b> → tidak ada tagihan bulan itu.</li>
+<li>Nominal yang kurang dari tarif tidak dianggap lunas (ditandai di catatan). Bulan yang sudah lunas di sistem tidak diubah kembali menjadi belum.</li>
+<li>Impor bisa diulang kapan saja: data yang sama tidak diduplikasi. Gunakan “Unduh Data Saat Ini” untuk mendapatkan file yang sudah terisi, ubah, lalu impor lagi.</li>
+<li>No HP Wali dipakai membantu verifikasi saat wali mendaftar akun (muncul tanda ✓ bila nomor sesuai).</li></ul></div>`;
+}
+function sppDownloadTemplate() {
+  if (!sppXlsxOk()) return;
+  const head = ['NIS', 'Nama', 'Kelas', 'Jenjang', 'Wali', 'No HP Wali', 'Tarif/Bulan'].concat(SPP_BLN);
+  const rows = [head,
+    ['2024001', 'Ahmad Fauzi', 'VII A', 'SMP', 'Budi Santoso', '081234567890', '', 'Lunas', 'Lunas', 'Lunas', '', '', '', '', '', '', '', '', ''],
+    ['2024002', 'Siti Aisyah', 'III B', 'MIS', 'Hasan', '081298765432', '', 'Lunas', 150000, '05/09/2026', '', '', '', '', '', '', '', '', ''],
+    ['2024003', 'Umar Faruq', 'X IPA', 'SMA', 'Budi Santoso', '081234567890', 275000, 'Lunas', '', '', '', '', '', '', '', '', '', '', '']];
+  const pet = [['PETUNJUK PENGISIAN'], [''], ['1. Satu baris = satu santri. Jangan mengubah judul kolom. Hapus 3 baris contoh sebelum mengisi.'], ['2. NIS wajib diisi. Jenjang: MIS, SMP, atau SMA (boleh kosong bila kelas jelas, mis. VII A = SMP).'], ['3. Tarif/Bulan boleh kosong (memakai tarif jenjang di website). Isi bila santri ini tarifnya berbeda.'], ['4. Kolom bulan (Juli sampai Juni) = bulan tahun ajaran yang dipilih saat impor.'], ['   Lunas / ✓ / angka nominal / tanggal bayar = sudah dibayar'], ['   kosong atau Belum = belum dibayar (tagihan tetap dibuat)'], ['   tanda - = tidak ada tagihan bulan itu'], ['5. Nominal yang kurang dari tarif tidak dianggap lunas.'], ['6. Boleh menghapus kolom bulan yang belum dipakai; bulan tersebut tidak diproses.']];
+  const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = head.map((_, i) => ({ wch: i === 1 ? 24 : i === 4 ? 18 : i === 5 ? 15 : 10 }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Data SPP'); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(pet), 'Petunjuk');
+  XLSX.writeFile(wb, 'Template_Impor_SPP.xlsx');
+}
+function sppExportFormatImpor() {
+  if (!sppXlsxOk()) return;
+  const cfg = sppCfg(), bills = sppLoad('tagihan', []).filter(b => b.ta == sppF.ta), months = sppMonths(sppF.ta), idx = {};
+  bills.forEach(b => { idx[String(b.sid) + '|' + b.ym] = b; });
+  const rows = [['NIS', 'Nama', 'Kelas', 'Jenjang', 'Wali', 'No HP Wali', 'Tarif/Bulan'].concat(SPP_BLN)];
+  S.forEach(s => rows.push([String(s.nis), s.nama, s.kelas, sppJenjang(s), s.wali || '', s.hpWali || '', ''].concat(months.map(m => { const b = idx[s.id + '|' + m.ym]; return !b ? '-' : b.status === 'Lunas' ? 'Lunas' : ''; }))));
+  const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = rows[0].map((_, i) => ({ wch: i === 1 ? 24 : i === 4 ? 18 : 11 }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Data SPP'); XLSX.writeFile(wb, 'Data_SPP_' + sppF.ta + '-' + (sppF.ta + 1) + '.xlsx');
 }
 
 /* --- Excel --- */
