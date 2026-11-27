@@ -23,3 +23,21 @@ Website ini masih menggunakan localStorage browser sebagaimana versi GitHub Page
 
 EXCEL
 Unduh template dari Portal Guru setelah memilih kelas. Jangan mengubah judul kolom NIS, Nama Santri, Kelas, Nilai. Isi nilai 0-100 pada kolom Nilai. Pustaka SheetJS dimuat melalui CDN sehingga impor/ekspor Excel memerlukan koneksi internet.
+
+
+PEMBARUAN MODUL AKADEMIK (VERSI IMPOR & PROFIL GURU)
+- Admin > Data Santri: unduh template Excel dan impor data santri secara massal. Kolom: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali. NIS yang sudah ada akan diperbarui.
+- Admin > Data Guru: unduh template dan impor guru massal. Kolom wajib: NIP, Nama, No HP. Mapel, Kelas Diajar, Wali Kelas dipisahkan titik koma.
+- Login guru menggunakan nomor HP dan password. Admin dapat mengubah nomor HP, penugasan mapel/kelas, kelas wali, dan password di Data Guru.
+- Guru dapat memilih beberapa mapel dan beberapa kelas sesuai penugasan untuk memasukkan atau mengimpor nilai.
+- Menu Profil Guru menampilkan nama, jabatan, pendidikan, mata pelajaran, biografi, dan foto URL guru. Profil dapat dilengkapi di Data Guru atau melalui impor Excel.
+- Menu Leger Nilai dibatasi pada admin dan guru yang kelasnya ditetapkan sebagai Wali Kelas.
+- Predikat dan keterangan raport memakai Bahasa Arab disertai keterangan Indonesia.
+
+PENTING — BATASAN KEAMANAN GITHUB PAGES
+Website ini masih aplikasi statis berbasis localStorage. Data tersimpan hanya di browser/perangkat tempat perubahan dilakukan, bukan database bersama. Karena JavaScript dan data localStorage berada di sisi pengguna, pembatasan menu leger serta login HP ini hanya pembatasan tampilan dan TIDAK dapat dianggap sebagai keamanan sungguhan. Guru dari HP berbeda tidak akan berbagi data secara otomatis. Untuk operasional sebenarnya, wajib pasang backend/database (mis. Supabase/Firebase), autentikasi server, dan aturan akses (RLS) untuk admin, guru, dan wali kelas. Jangan masukkan data santri sensitif/nomor HP asli sampai backend aman dipasang.
+
+FORMAT TEMPLATE
+- Template impor santri: NIS, Nama, Jenis Kelamin, Kelas, TTL, Alamat, Wali.
+- Template impor guru: NIP, Nama, No HP, Mata Pelajaran, Kelas Diajar, Wali Kelas, Password, Pendidikan, Jabatan, Bio, Foto URL.
+- Nilai guru: NIS, Nama Santri, Kelas, Nilai (0–100).

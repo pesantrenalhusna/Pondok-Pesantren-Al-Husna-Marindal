@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pondok Pesantren Al-Husna Marindal | Portal Pesantren</title><link rel="icon" href="logo.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Public+Sans:wght@400;600;700&family=Source+Serif+4:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--g:#0b6b3a;--g2:#0a9b48;--gd:#064626;--r:#0b8050;--y:#f5c400;--bg:#f5f8f6;--t:#18271f;--m:#5b6b62;--c:#fff;--b:#e1e8e3}
@@ -42,10 +43,72 @@ table{width:100%;border-collapse:collapse;font-size:14px}th{background:var(--g);
 .sc{overflow-x:auto}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}.tabs button{border:1px solid var(--g2);background:#fff;color:var(--g);padding:9px 16px;border-radius:99px;cursor:pointer;font-weight:700}.tabs button.on{background:var(--g);color:#fff}
 footer{background:var(--gd);color:#cfe6d9;margin-top:80px;font-size:14px}footer .fi{max-width:1160px;margin:auto;padding:46px 20px;display:grid;gap:30px;grid-template-columns:1.4fr 1fr 1fr}@media(max-width:800px){footer .fi{grid-template-columns:1fr}}
 footer h4{color:#fff;margin:0 0 10px}footer a{display:block;text-decoration:none;padding:2px 0}footer a:hover{color:var(--y)}footer .cp{background:#043b20;text-align:center;padding:14px;font-size:13px}
-.kta{width:340px;height:215px;border-radius:12px;border:2px solid var(--g);background:#fff;color:#111;overflow:hidden;position:relative;margin:10px 10px 10px 0;display:inline-block;vertical-align:top;font-size:12px}
-.kta .h{background:var(--g);color:#fff;padding:6px 8px;display:flex;gap:8px;align-items:center;font-weight:700;font-size:12px}.kta .h img{height:32px;background:#fff;border-radius:50%}
-.kta .p{position:absolute;left:10px;top:52px;width:70px;height:90px;background:#d8e8de;border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--g);font-weight:700}
-.kta .d{position:absolute;left:92px;top:50px;line-height:1.55}.kta .f{position:absolute;bottom:0;left:0;right:0;height:10px;background:linear-gradient(90deg,var(--r) 50%,var(--g2) 50%)}
+
+/* KTA Al-Husna: desain mengikuti kartu identitas resmi pesantren */
+.kta-tools{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:14px 0 20px}
+.kta-tools>div{min-width:210px;flex:1}
+.kta-preview{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start}
+.kta-pair{display:flex;flex-direction:column;gap:10px;margin:0 0 22px}
+.kta-side{width:550px;height:337px;position:relative;overflow:hidden;background:#fff;color:#0b3d52;border:1px solid #d9e2dc;box-shadow:0 8px 25px rgba(12,50,32,.12);font-family:Arial,Helvetica,sans-serif;flex:none}
+.kta-head{height:78px;background:#176719;color:#fff;display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:8px;padding:7px 14px;text-align:center}
+.kta-head img{width:60px;height:60px;object-fit:contain;background:#fff;border-radius:50%;padding:2px}
+.kta-head strong{font-size:16px;line-height:1.25;letter-spacing:.45px;text-shadow:1px 1px 1px #000}
+.kta-head small{display:block;font-size:11px;line-height:1.25;margin-top:3px}
+.kta-front-body{height:226px;position:relative;padding:16px 18px;display:grid;grid-template-columns:150px 1fr;gap:20px;align-items:center}
+.kta-watermark{position:absolute;width:260px;height:260px;object-fit:contain;opacity:.10;left:48%;top:50%;transform:translate(-50%,-50%);pointer-events:none}
+.kta-student-photo{width:150px;height:190px;object-fit:cover;object-position:center top;border-radius:15px;background:#e7eee9;border:2px solid #176719;position:relative;z-index:1}
+.kta-photo-placeholder{display:flex;align-items:center;justify-content:center;color:#176719;font-size:62px;font-weight:bold}
+.kta-info{position:relative;z-index:1;min-width:0;padding-bottom:8px}
+.kta-title{font-size:24px;font-weight:800;letter-spacing:.4px;color:#0a3d55;margin:0 0 12px;line-height:1.15}
+.kta-fields{font-size:15px;font-weight:700;line-height:1.72;color:#0a3d55}
+.kta-fields .field{display:grid;grid-template-columns:112px 12px 1fr;gap:3px}
+.kta-fields .field span:last-child{overflow-wrap:anywhere}
+.kta-qr{position:absolute;right:16px;bottom:12px;width:62px;height:62px;background:#fff;padding:3px;border:1px solid #d5dfd8;z-index:2}
+.kta-qr img{width:100%;height:100%;display:block}
+.kta-ribbon{position:absolute;bottom:0;left:0;right:0;height:32px;background:#176719;clip-path:polygon(0 0,79% 0,84% 100%,0 100%)}
+.kta-ribbon:after{content:"";position:absolute;left:28%;right:0;bottom:0;height:13px;background:#b79a13;clip-path:polygon(0 0,100% 0,100% 100%,4% 100%)}
+.kta-motto{position:absolute;right:18px;bottom:8px;z-index:2;color:#153f52;font-family:Georgia,serif;font-style:italic;font-weight:bold;font-size:15px;text-shadow:1px 1px #fff}
+.kta-back-body{height:226px;padding:18px 28px 34px;position:relative;color:#0b3d52}
+.kta-back-body h3{font-size:25px;line-height:1.2;margin:0 0 12px;color:#0b3d52}
+.kta-terms{font-size:14px;line-height:1.48;padding-left:22px;margin:0}
+.kta-terms li{padding-left:4px;margin:0 0 5px}
+.kta-back-footer{position:absolute;bottom:0;left:0;right:0;height:32px;background:#176719;clip-path:polygon(0 0,52% 0,57% 100%,0 100%)}
+.kta-back-footer:after{content:"";position:absolute;left:30%;right:0;bottom:0;height:13px;background:#b79a13;clip-path:polygon(0 0,100% 0,100% 100%,4% 100%)}
+.kta-back-motto{position:absolute;right:18px;bottom:7px;color:#153f52;font-family:Georgia,serif;font-style:italic;font-size:14px;font-weight:bold}
+.kta-side,.kta-side *{box-sizing:border-box}
+@media(max-width:650px){.kta-preview{overflow-x:auto;flex-wrap:nowrap;padding:4px 2px 18px}.kta-side{transform-origin:top left}.kta-pair{margin-right:10px}}
+@media print{
+ @page{size:A4 portrait;margin:12mm}
+ body{background:#fff!important}
+ body *{visibility:hidden!important}
+ #kk,#kk *{visibility:visible!important}
+ #kk{position:absolute!important;left:0!important;top:0!important;width:100%!important}
+ .noprint,.kta-tools,.kta-note{display:none!important}
+ .kta-preview{display:block!important}
+ .kta-pair{display:contents!important}
+ .kta-side{width:85.6mm!important;height:52.5mm!important;margin:0 auto!important;box-shadow:none!important;border:0.2mm solid #ddd!important;break-inside:avoid;page-break-inside:avoid}
+ .kta-back{break-before:page!important;page-break-before:always!important}
+ .kta-pair:not(:first-child) .kta-front{break-before:page!important;page-break-before:always!important}
+ .kta-head{height:12.2mm!important;grid-template-columns:10mm 1fr 10mm!important;padding:1mm 2mm!important;gap:1mm!important}
+ .kta-head img{width:9.5mm!important;height:9.5mm!important}
+ .kta-head strong{font-size:2.45mm!important}
+ .kta-head small{font-size:1.65mm!important}
+ .kta-front-body,.kta-back-body{height:35.2mm!important}
+ .kta-front-body{padding:2mm 2.5mm!important;grid-template-columns:23mm 1fr!important;gap:3mm!important}
+ .kta-student-photo{width:23mm!important;height:29mm!important;border-radius:2mm!important}
+ .kta-title{font-size:4mm!important;margin-bottom:1.5mm!important}
+ .kta-fields{font-size:2.55mm!important;line-height:1.65!important}
+ .kta-fields .field{grid-template-columns:17mm 2mm 1fr!important}
+ .kta-qr{width:9mm!important;height:9mm!important;right:2mm!important;bottom:1.5mm!important;padding:.4mm!important}
+ .kta-ribbon,.kta-back-footer{height:5.1mm!important}
+ .kta-ribbon:after,.kta-back-footer:after{height:2mm!important}
+ .kta-motto,.kta-back-motto{font-size:2.5mm!important;right:2.5mm!important;bottom:1mm!important}
+ .kta-back-body{padding:2.8mm 4mm 5mm!important}
+ .kta-back-body h3{font-size:4mm!important;margin-bottom:1.8mm!important}
+ .kta-terms{font-size:2.45mm!important;line-height:1.48!important;padding-left:3.2mm!important}
+ .kta-terms li{margin-bottom:.7mm!important}
+}
+
 .rap{background:#fff;color:#111;padding:24px;border:1px solid var(--b)}.rap th{background:#e8f3ec;color:#111}.rap td{border:1px solid #bbb}
 .rh{display:flex;gap:14px;align-items:center;border-bottom:3px double #111;padding-bottom:8px;margin-bottom:12px}.rh img{height:70px}.msg{padding:12px;border-radius:8px;background:#e3f6ea;color:#07692f;margin:12px 0}
 .rv{opacity:0;transform:translateY(24px);transition:.7s}.rv.vis{opacity:1;transform:none}
@@ -292,6 +355,21 @@ h1,h2,h3,h4{font-family:'Public Sans','Plus Jakarta Sans',sans-serif;letter-spac
 .nw .d b{font-family:'Public Sans',sans-serif;font-size:16px}.btn,.la{background:#176342;border-radius:8px}.btn.o{background:#c6a15a;color:#18271f}
 .admin-editor{display:grid;gap:18px}.editor-panel{background:#fff;border:1px solid #e1e8e3;border-radius:12px;padding:20px}.editor-panel h3{margin:0 0 12px;color:#174b34;font-size:18px}.editor-item{display:grid;grid-template-columns:1fr 1fr 130px 150px;gap:10px;padding:12px 0;border-top:1px solid #edf1ee}.editor-item input,.editor-item select{min-width:0}.editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.muted-note{font-size:12px;color:#65736b;line-height:1.6}
 @media(max-width:700px){.editor-item{grid-template-columns:1fr 1fr}.editor-item>*{min-width:0}.hero .in{min-height:0}}
+
+/* Modul impor massal, profil guru, leger, dan tampilan nilai Arab */
+.import-panel{background:#f5faf6;border:1px dashed #9dbca8;border-radius:10px;padding:15px;margin:15px 0}
+.import-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.teacher-card{background:#fff;border:1px solid #e4ebe6;border-radius:13px;overflow:hidden;box-shadow:0 8px 22px #153c2510}
+.teacher-card .photo{height:185px;background:linear-gradient(135deg,#e8f3eb,#dcebe1);display:flex;align-items:center;justify-content:center;color:#0b7045;font-size:54px;overflow:hidden}
+.teacher-card .photo img{width:100%;height:100%;object-fit:cover}
+.teacher-card .body{padding:18px}
+.teacher-card h3{margin:0 0 5px;color:#10442e;font-size:17px}
+.teacher-card .meta{font-size:12px;color:#718078;line-height:1.6}
+.arabic{font-family:"Noto Naskh Arabic","Amiri",serif;direction:rtl;display:block;font-size:15px;line-height:1.7;color:#174d37}
+.leg-head{display:flex;gap:12px;align-items:end;justify-content:space-between;flex-wrap:wrap}
+.leg-head .muted-note{max-width:620px}
+@media(max-width:650px){.import-actions>*{width:100%}.teacher-card .photo{height:160px}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -310,7 +388,7 @@ h1,h2,h3,h4{font-family:'Public Sans','Plus Jakarta Sans',sans-serif;letter-spac
 <header><img src="logo.png" alt="Logo"><div class="br"><b>PONDOK PESANTREN AL-HUSNA</b><small>Pondok Pesantren · Tarbiyatul Mu'allimin Al-Islamiyah · Deli Serdang</small></div><a class="la" href="#admin">Login Admin ↗</a><button id="mb" onclick="$('#nav').classList.toggle('open')">☰</button></header>
 <nav id="nav" class="sub"></nav>
 <main id="app"></main>
-<footer><div class="fi"><div><h4>Pondok Pesantren Al-Husna</h4>Mencetak generasi berilmu, berakhlak mulia, dan berwawasan global.<br><br>📍 Jl. Pelajar Pasar III Dusun X, Marindal I, Kec. Patumbak, Kab. Deli Serdang, Sumatera Utara<br><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Pondok+Pesantren+Al+Husna+Marindal+Patumbak">Lihat di Google Maps →</a></div><div><h4>Menu</h4><a href="#beranda">Beranda</a><a href="#informasi">Informasi</a><a href="#daftar">Pendaftaran Santri Baru</a><a href="#cari">Cari Santri</a></div><div><h4>Portal</h4><a href="#admin">Login Admin</a><a href="#guru">Portal Guru</a><a href="#admin">Absensi Digital</a><a href="#admin">KTA &amp; Raport</a></div></div><div class="cp">© <span id="yr"></span> Pondok Pesantren Al-Husna. Seluruh hak cipta dilindungi.</div></footer>
+<footer><div class="fi"><div><h4>Pondok Pesantren Al-Husna</h4>Mencetak generasi berilmu, berakhlak mulia, dan berwawasan global.<br><br>📍 Jl. Pelajar Pasar III Dusun X, Marindal I, Kec. Patumbak, Kab. Deli Serdang, Sumatera Utara<br><a target="_blank" href="https://www.google.com/maps/search/?api=1&query=Pondok+Pesantren+Al+Husna+Marindal+Patumbak">Lihat di Google Maps →</a></div><div><h4>Menu</h4><a href="#beranda">Beranda</a><a href="#informasi">Informasi</a><a href="#daftar">Pendaftaran Santri Baru</a><a href="#cari">Cari Santri</a></div><div><h4>Portal</h4><a href="#admin">Login Admin</a><a href="#guru">Portal Guru</a><a href="#profil-guru">Profil Guru</a><a href="#admin">Absensi Digital</a><a href="#admin">KTA &amp; Raport</a></div></div><div class="cp">© <span id="yr"></span> Pondok Pesantren Al-Husna. Seluruh hak cipta dilindungi.</div></footer>
 <script>
 const $=s=>document.querySelector(s),e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem('alh_'+k))||d}catch(x){return d}},sv=(k,v)=>{try{localStorage.setItem('alh_'+k,JSON.stringify(v))}catch(x){}};
@@ -319,7 +397,7 @@ if(!S){S=[{id:1,nis:'2024001',nama:'Ahmad Fauzi',jk:'L',kelas:'VII A',ttl:'Medan
 if(!G){G=[{id:1,nip:'G001',nama:'Ustadz Abdullah, S.Pd.I',mapel:'Fiqih'},{id:2,nip:'G002',nama:'Ustadzah Fatimah, S.Pd',mapel:'Bahasa Arab'}];sv('guru',G)}
 const MP=['Tauhid','Fiqih','Nahwu','Shorof','Tahfidz','Bahasa Arab','Bahasa Inggris','Matematika','Bahasa Indonesia'];
 const ADMIN={u:'admin',p:'alhusna123'};let tab='santri',adm=sessionStorage.alh==='1',selRap=null;
-const menu=[['beranda','Beranda'],['informasi','Informasi'],['tentang','Tentang'],['daftar','Pendaftaran'],['cari','Pencarian Santri'],['guru','Portal Guru']];
+const menu=[['beranda','Beranda'],['informasi','Informasi'],['tentang','Tentang'],['daftar','Pendaftaran'],['cari','Pencarian Santri'],['profil-guru','Profil Guru'],['guru','Portal Guru'],['leger','Leger Nilai']];
 const DEFAULT_SITE={
  heroTitle:"Membangun Generasi Qur'ani, Berilmu & Berakhlak Mulia",
  heroDesc:"Pondok Pesantren Al-Husna memadukan pendidikan Al-Qur'an, Hadits, dan ilmu pengetahuan untuk membentuk generasi berkarakter, mandiri, dan siap menghadapi masa depan.",
@@ -366,7 +444,7 @@ function saveSite(){sv('site_content',SITE);R()}
 
 const nid=a=>a.reduce((m,x)=>Math.max(m,x.id),0)+1,today=()=>new Date().toISOString().slice(0,10);
 function R(){const v=(location.hash||'#beranda').slice(1);$('#nav').innerHTML=`<div class="side-head"><span>MENU UTAMA</span><strong>Jelajahi Al-Husna</strong></div>`+menu.map(m=>`<a href="#${m[0]}" class="${v==m[0]?'on':''} ${m[0]=='daftar'?'cta':''}">${m[1]}</a>`).join('')+`<a href="#admin" class="${v=='admin'?'on':''}">Portal Admin</a>`;
-$('#yr').textContent=new Date().getFullYear();const pg=({beranda,informasi,tentang,daftar,cari,admin,guru:guruPortal}[v]||beranda)(),tt={informasi:'Informasi Pesantren',tentang:'Tentang Pesantren',daftar:'Pendaftaran Santri Baru',cari:'Pencarian Data Santri',admin:'Portal Admin',guru:'Portal Guru'};
+$('#yr').textContent=new Date().getFullYear();const pg=({beranda,informasi,tentang,daftar,cari,admin,guru:guruPortal,'profil-guru':profilGuru,leger:legerPage}[v]||beranda)(),tt={'profil-guru':'Profil Guru Pesantren',leger:'Leger Nilai Kelas',informasi:'Informasi Pesantren',tentang:'Tentang Pesantren',daftar:'Pendaftaran Santri Baru',cari:'Pencarian Data Santri',admin:'Portal Admin',guru:'Portal Guru'};
 $('#app').innerHTML=v=='beranda'||!tt[v]?pg:`<div class="pgb"><div><small>Beranda / ${tt[v]}</small><h2>${tt[v]}</h2></div></div><div class="wrap">${pg}</div>`;$('#nav').classList.remove('open');window.scrollTo(0,0);
 if(v=='admin'&&adm)T();if(v=='cari'&&sessionStorage.q){$('#q').value=sessionStorage.q;sessionStorage.q='';fq()}
 const io=new IntersectionObserver(x=>x.forEach(i=>i.isIntersecting&&i.target.classList.add('vis')),{threshold:.1});document.querySelectorAll('.rv').forEach(x=>io.observe(x))}
@@ -397,7 +475,8 @@ function fq(){const q=$('#q').value.toLowerCase().trim();const r=q?S.filter(s=>[
 function admin(){if(!adm)return`<h2 class="t">Login Admin</h2><div class="card" style="max-width:380px"><label>Username</label><input id="u"><label>Password</label><input id="pw" type="password"><br><button class="btn" onclick="lg()">Masuk</button><p style="font-size:12px">Demo: admin / alhusna123 (ubah di kode sebelum dipakai).</p></div>`;
 return`<div class="tabs noprint">${[['santri','Data Santri'],['guru','Data Guru'],['psb','Pendaftar Baru'],['absen','Absensi'],['kta','KTA'],['mapel','Mata Pelajaran & KKM'],['rapor','Raport'],['desain','Konten & Desain']].map(t=>`<button class="${tab==t[0]?'on':''}" onclick="tab='${t[0]}';R()">${t[1]}</button>`).join('')}<button class="btn r" onclick="sessionStorage.alh='0';adm=false;R()">Keluar</button></div><div class="card" id="pn"></div>`}
 function lg(){if($('#u').value==ADMIN.u&&$('#pw').value==ADMIN.p){adm=true;sessionStorage.alh='1';R()}else alert('Username/password salah')}
-function T(){$('#pn').innerHTML=({santri:pS,guru:pG,psb:pP,absen:pA,kta:pK,mapel:pMapel,rapor:()=>pR()+alhAdminReportOverview(),desain:pD}[tab])()}
+function T(){$('#pn').innerHTML=({santri:pS,guru:pG,psb:pP,absen:pA,kta:pK,mapel:pMapel,rapor:()=>pR()+alhAdminReportOverview(),desain:pD}[tab])();if(tab==='kta')setTimeout(renderKtaQR,80)}
+function renderKtaQR(){document.querySelectorAll('.kta-qr[data-qr]').forEach(el=>{if(el.dataset.done)return;el.dataset.done='1';if(window.QRCode){new QRCode(el,{text:decodeURIComponent(el.dataset.qr),width:120,height:120,colorDark:'#082f20',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}else{el.innerHTML='<small style="font-size:7px">QR perlu koneksi internet untuk memuat pustaka</small>'}})}
 function pD(){return `<div class="admin-editor"><div class="editor-panel"><h3>Identitas &amp; Tampilan Beranda</h3><div class="f2"><div><label>Judul utama</label><textarea id="edHeroTitle" rows="2">${e(SITE.heroTitle)}</textarea></div><div><label>Deskripsi utama</label><textarea id="edHeroDesc" rows="3">${e(SITE.heroDesc)}</textarea></div><div><label>Teks kecil di atas judul</label><input id="edHeroEyebrow" value="${e(SITE.heroEyebrow)}"></div><div><label>Judul bagian keunggulan</label><input id="edWhyTitle" value="${e(SITE.whyTitle)}"></div><div><label>Judul bagian program</label><input id="edProgramTitle" value="${e(SITE.programTitle)}"></div><div><label>Judul bagian informasi</label><input id="edNewsTitle" value="${e(SITE.newsTitle)}"></div></div></div>
 <div class="editor-panel"><h3>Informasi Profil Pesantren</h3><div class="f2"><div><label>Tentang Kami</label><textarea id="edAbout" rows="4">${e(SITE.aboutText)}</textarea></div><div><label>Visi</label><textarea id="edVision" rows="4">${e(SITE.visionText)}</textarea></div><div><label>Misi (satu poin per baris)</label><textarea id="edMission" rows="4">${e(SITE.missionText)}</textarea></div><div><label>Alamat kontak</label><textarea id="edContact" rows="4">${e(SITE.contactText)}</textarea></div></div></div>
 <div class="editor-panel"><h3>Keunggulan Pesantren</h3><p class="muted-note">Ubah judul, keterangan, ikon garis, dan warna setiap kartu.</p><div id="featureEditor">${SITE.features.map((f,i)=>editorRow('feature',f,i)).join('')}</div><div class="editor-actions"><button class="btn s" onclick="addEditorItem('feature')">Tambah Keunggulan</button></div></div>
@@ -426,9 +505,11 @@ function acc(id){const p=P.find(x=>x.id==id),k=prompt('Masukkan kelas untuk '+p.
 let aD=today(),aK='santri';
 function pA(){const L=aK=='santri'?S:G,r=A[aK+aD]||{};const m=aD.slice(0,7);return`<h3>Absensi Digital</h3><div class="f2"><div><label>Tanggal</label><input type="date" value="${aD}" onchange="aD=this.value;T()"></div><div><label>Kelompok</label><select onchange="aK=this.value;T()"><option value="santri" ${aK=='santri'?'selected':''}>Santri</option><option value="guru" ${aK=='guru'?'selected':''}>Guru</option></select></div></div><br><div class="sc"><table><tr><th>Nama</th><th>Status</th><th>Rekap Bulan Ini (H/I/S/A)</th></tr>${L.map(x=>{const c={H:0,I:0,S:0,A:0};Object.keys(A).filter(k=>k.startsWith(aK+m)).forEach(k=>{const v=A[k][x.id];if(v)c[v]++});return`<tr><td>${e(x.nama)}</td><td><select data-i="${x.id}" style="width:auto">${['H','I','S','A'].map(s=>`<option ${r[x.id]==s?'selected':''} value="${s}">${{H:'Hadir',I:'Izin',S:'Sakit',A:'Alpa'}[s]}</option>`).join('')}</select></td><td>${c.H}/${c.I}/${c.S}/${c.A}</td></tr>`}).join('')}</table></div><br><button class="btn" onclick="sa()">Simpan Absensi</button>`}
 function sa(){const o={};document.querySelectorAll('#pn select[data-i]').forEach(s=>o[s.dataset.i]=s.value);A[aK+aD]=o;sv('absen',A);T();alert('Absensi tersimpan')}
-function pK(){return`<h3>Pembuatan KTA Santri</h3><div class="noprint"><label>Pilih Santri</label><select id="ks" onchange="kr()"><option value="">— Semua santri —</option>${opt(S,1)}</select><br><button class="btn" onclick="print()">🖨️ Cetak</button></div><div id="kk">${S.map(kc).join('')}</div>`}
-function kr(){const v=$('#ks').value;$('#kk').innerHTML=(v?S.filter(s=>s.id==v):S).map(kc).join('')}
-function kc(s){return`<div class="kta"><div class="h"><img src="logo.png" alt=""><div>KARTU TANDA ANGGOTA<br>PONDOK PESANTREN AL-HUSNA</div></div><div class="p">${e(s.nama[0])}</div><div class="d"><b style="font-size:14px">${e(s.nama)}</b><br>NIS : ${e(s.nis)}<br>Kelas : ${e(s.kelas)}<br>TTL : ${e(s.ttl)}<br>Alamat : ${e(s.alamat)}</div><div class="f"></div></div>`}
+function pK(){return`<h3>Pembuatan KTA Santri</h3><p class="muted-note">Desain mengikuti contoh KTA resmi Al-Husna. Setiap kartu memiliki sisi depan, sisi belakang, dan QR otomatis yang dibuat di perangkat ini.</p><div class="kta-tools noprint"><div><label>Pilih Santri</label><select id="ks" onchange="kr()"><option value="">— Semua santri —</option>${opt(S,1)}</select></div><div><label>Unggah foto santri terpilih</label><input type="file" accept="image/*" id="ktaPhoto" onchange="saveKtaPhoto(this)"></div><div style="flex:0 0 auto"><button class="btn" onclick="print()">🖨️ Cetak KTA</button></div></div><p class="kta-note muted-note noprint">Tips: pilih satu santri, unggah foto formal, lalu cetak. Untuk cetak bolak-balik, aktifkan opsi duplex/dua sisi pada printer. Jika belum ada foto, kartu menampilkan inisial santri.</p><div id="kk" class="kta-preview">${S.map(kc).join('')}</div>`}
+function kr(){const v=$('#ks').value;$('#kk').innerHTML=(v?S.filter(s=>String(s.id)==v):S).map(kc).join('')}
+function saveKtaPhoto(input){const file=input.files&&input.files[0],id=$('#ks').value;if(!file)return;if(!id){alert('Pilih satu santri terlebih dahulu sebelum mengunggah foto.');input.value='';return}if(!file.type.startsWith('image/')){alert('File harus berupa gambar.');input.value='';return}const reader=new FileReader();reader.onload=()=>{const img=new Image();img.onload=()=>{const maxW=420,maxH=560,scale=Math.min(1,maxW/img.width,maxH/img.height),canvas=document.createElement('canvas');canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);const target=S.find(x=>String(x.id)===String(id));if(!target)return;target.fotoKTA=canvas.toDataURL('image/jpeg',.78);sv('santri',S);kr();alert('Foto KTA berhasil disimpan pada data santri ini.')};img.onerror=()=>alert('Foto tidak dapat dibaca.');img.src=reader.result};reader.readAsDataURL(file)}
+function qrKtaText(s){return`PONDOK PESANTREN AL-HUSNA\\nNama: ${s.nama||'-'}\\nNIS: ${s.nis||'-'}\\nKelas: ${s.kelas||'-'}\\nKartu identitas santri`}
+function kc(s){const photo=s.fotoKTA?`<img class="kta-student-photo" src="${s.fotoKTA}" alt="Foto ${e(s.nama)}">`:`<div class="kta-student-photo kta-photo-placeholder">${e((s.nama||'?').trim().charAt(0).toUpperCase())}</div>`;const qrText=encodeURIComponent(qrKtaText(s));const watermark='logo.png';return`<div class="kta-pair"><section class="kta-side kta-front"><div class="kta-head"><img src="logo.png" alt="Logo Al-Husna"><div><strong>YAYASAN PONDOK PESANTREN AL-HUSNA<br>TARBIYYATUL MU’ALLIMIN AL-ISLAMIYYAH (TMI)<br>SMP, SMA SWASTA PESANTREN AL-HUSNA</strong><small>Jl. Pelajar Pasar III Marindal I, Patumbak, Deli Serdang, Sumatera Utara</small></div><img src="logo.png" alt="Logo Al-Husna"></div><div class="kta-front-body"><img class="kta-watermark" src="${watermark}" alt=""><div>${photo}</div><div class="kta-info"><h2 class="kta-title">KARTU PELAJAR SANTRI/WATI</h2><div class="kta-fields"><div class="field"><span>Nama Lengkap</span><span>:</span><span>${e(s.nama)}</span></div><div class="field"><span>NISN / NIS</span><span>:</span><span>${e(s.nis)}</span></div><div class="field"><span>T.T.L</span><span>:</span><span>${e(s.ttl||'-')}</span></div><div class="field"><span>Jenis Kelamin</span><span>:</span><span>${e(s.jk==='L'?'Laki-Laki':s.jk==='P'?'Perempuan':s.jk||'-')}</span></div><div class="field"><span>Alamat</span><span>:</span><span>${e(s.alamat||'-')}</span></div><div class="field"><span>Kelas</span><span>:</span><span>${e(s.kelas||'-')}</span></div></div></div><div class="kta-qr" title="QR identitas santri" data-qr="${qrText}"></div><div class="kta-ribbon"></div><div class="kta-motto">Tarbiyyatul Mu’allimin Al-Islamiyyah</div></div></section><section class="kta-side kta-back"><div class="kta-head"><img src="logo.png" alt="Logo Al-Husna"><div><strong>YAYASAN PONDOK PESANTREN AL-HUSNA<br>TARBIYYATUL MU’ALLIMIN AL-ISLAMIYYAH (TMI)<br>SMP, SMA SWASTA PESANTREN AL-HUSNA</strong><small>Jl. Pelajar Pasar III Marindal I, Patumbak, Deli Serdang, Sumatera Utara</small></div><img src="logo.png" alt="Logo Al-Husna"></div><div class="kta-back-body"><h3>SYARAT DAN KETENTUAN</h3><ul class="kta-terms"><li>Kartu ini merupakan identitas resmi pemegang kartu selama menjadi santri/wati aktif dan tidak dapat dipindahtangankan kepada pihak lain.</li><li>Pemegang kartu wajib membawa dan menunjukkan kartu ini saat menggunakan fasilitas pesantren atau mengikuti kegiatan resmi kependidikan.</li><li>Apabila kartu ini hilang atau rusak, pemegang kartu segera melapor ke bagian pengajaran pesantren, dan bagi yang menemukan harap mengembalikan ke alamat pesantren yang tertera.</li></ul><div class="kta-back-footer"></div><div class="kta-back-motto">Tarbiyyatul Mu’allimin Al-Islamiyyah</div></div></section></div>`}
 function pR(){const id=selRap||(S[0]||{}).id,sm=window.sem||'Ganjil '+new Date().getFullYear();if(!id)return'Belum ada santri.';const s=S.find(x=>x.id==id),n=N[id+sm]||{};
 const rows=MP.map(m=>{const v=n[m];const p=v===''||v==null?'':v>=90?'A':v>=80?'B':v>=70?'C':'D';return`<tr><td>${m}</td><td><span class="noprint"><input type="number" min="0" max="100" data-m="${m}" value="${n[m]??''}" style="width:80px"></span><span class="pv">${n[m]??''}</span></td><td>${p}</td></tr>`}).join('');
 const vals=MP.map(m=>+n[m]).filter(x=>x),avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'-';
@@ -526,8 +607,8 @@ function pR(){
  const id=selRap||(S[0]||{}).id,sm=window.sem||ALH_TERM;if(!id)return'<div class="card">Belum ada data santri.</div>';
  const st=S.find(x=>String(x.id)===String(id));if(!st)return'<div class="card">Santri tidak ditemukan.</div>';
  const n=N[alhScoreKey(id,sm)]||{},groupOrder=['Nasional','Keagamaan','Bahasa'];
- const grade=v=>v==null||v===''?'':Number(v)>=90?'A':Number(v)>=80?'B':Number(v)>=70?'C':'D';
- const rows=groupOrder.map((group,gi)=>{const ms=ALH_MAPELS.filter(m=>m.kat===group);if(!ms.length)return'';return `<tr class="report-group"><td colspan="6">${gi===0?'A. KURIKULUM NASIONAL':gi===1?'B. KURIKULUM PESANTREN – ILMU KEAGAMAAN':'C. KURIKULUM PESANTREN – ILMU BAHASA'}</td></tr>`+ms.map((m,i)=>{const v=n[m.nama]??'',g=grade(v);return `<tr><td>${i+1}</td><td class="subject-name">${e(m.nama)}<span class="arabic">${e(m.ar)}</span></td><td>${m.kkm}</td><td>${v===''?'—':v}</td><td>${g||'—'}</td><td>${v===''?'Belum diisi':Number(v)>=m.kkm?'Tuntas':'Belum tuntas'}</td></tr>`}).join('')}).join('');
+ const grade=v=>v==null||v===''?'':Number(v)>=90?'ممتاز':Number(v)>=80?'جيد جداً':Number(v)>=70?'جيد':'مقبول';
+ const rows=groupOrder.map((group,gi)=>{const ms=ALH_MAPELS.filter(m=>m.kat===group);if(!ms.length)return'';return `<tr class="report-group"><td colspan="6">${gi===0?'A. KURIKULUM NASIONAL':gi===1?'B. KURIKULUM PESANTREN – ILMU KEAGAMAAN':'C. KURIKULUM PESANTREN – ILMU BAHASA'}</td></tr>`+ms.map((m,i)=>{const v=n[m.nama]??'',g=grade(v);return `<tr><td>${i+1}</td><td class="subject-name">${e(m.nama)}<span class="arabic">${e(m.ar)}</span></td><td>${m.kkm}</td><td>${v===''?'—':v}</td><td>${g||'—'}</td><td>${v===''?'Belum diisi':Number(v)>=m.kkm?'ناجح / Tuntas':'يحتاج إلى تحسين / Belum tuntas'}</td></tr>`}).join('')}).join('');
  const vals=ALH_MAPELS.map(m=>n[m.nama]).filter(v=>v!==''&&v!=null&&Number.isFinite(Number(v))).map(Number),avg=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1):'—';
  const h=Object.keys(A).filter(k=>k.startsWith('santri')).reduce((c,k)=>{const v=(A[k]||{})[id];if(v)c[v]=(c[v]||0)+1;return c},{});
  return `<div class="noprint f2"><div><label>Pilih Santri</label><select onchange="selRap=this.value;R()">${S.map(x=>`<option value="${x.id}" ${String(x.id)===String(id)?'selected':''}>${e(x.nama)} – ${e(x.kelas)}</option>`).join('')}</select></div><div><label>Semester / Tahun Ajaran</label><input value="${e(sm)}" onchange="window.sem=this.value;R()"></div><div><button class="btn o" onclick="print()">Cetak Raport / PDF</button></div></div>
@@ -544,4 +625,145 @@ function alhAdminReportOverview(){
 
 
 R();
+
+/* =========================
+   MODUL AKADEMIK AL-HUSNA
+   Impor data Excel, login HP guru, multi-mapel/multi-kelas,
+   leger wali kelas, dan profil guru publik.
+   Catatan: penyimpanan tetap localStorage pada versi GitHub Pages statis.
+========================= */
+function alhNorm(v){return String(v??'').trim().toLowerCase()}
+function alhSplit(v){return String(v||'').split(/[;,|]/).map(x=>x.trim()).filter(Boolean)}
+function alhTeacherSubjects(g){return Array.isArray(g.mapels)&&g.mapels.length?g.mapels:(g.mapel?[g.mapel]:[])}
+function alhTeacherClasses(g){return Array.isArray(g.kelasAjar)&&g.kelasAjar.length?g.kelasAjar:(g.kelas?[...alhSplit(g.kelas)]:[])}
+function alhIsWali(g,cls){return alhTeacherClasses(g).includes(cls)&&((g.waliKelas||[]).includes(cls)||g.waliKelas===cls)}
+function alhImportBook(file,cb){
+ if(!alhNeedXLSX()||!file)return;
+ const fr=new FileReader();
+ fr.onload=ev=>{try{const wb=XLSX.read(ev.target.result,{type:'array'});const ws=wb.Sheets[wb.SheetNames[0]];cb(XLSX.utils.sheet_to_json(ws,{defval:''}));}
+ catch(err){alert('File Excel tidak dapat dibaca. Gunakan template .xlsx dari portal.')}};
+ fr.readAsArrayBuffer(file);
+}
+function alhDownloadDataTemplate(kind){
+ if(!alhNeedXLSX())return;
+ let rows=[],name='';
+ if(kind==='santri'){
+  rows=[['NIS','Nama','Jenis Kelamin','Kelas','TTL','Alamat','Wali'],['2026001','Nama Santri','L','VII A','Medan, 01-01-2012','Alamat lengkap','Nama Wali']];name='Template_Impor_Santri.xlsx';
+ }else{
+  rows=[['NIP','Nama','No HP','Mata Pelajaran','Kelas Diajar','Wali Kelas','Password','Pendidikan','Jabatan','Bio','Foto URL'],['G003','Nama Guru','081234567890','Fiqih; Bahasa Arab','VII A; VIII A','VII A','123456','S1 Pendidikan Agama Islam','Ustadz','Profil singkat guru','https://...']];name='Template_Impor_Guru.xlsx';
+ }
+ const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);
+ ws['!cols']=rows[0].map(()=>({wch:24}));
+ XLSX.utils.book_append_sheet(wb,ws,'Data');
+ XLSX.writeFile(wb,name);
+}
+function alhImportSantri(input){
+ const file=input.files?.[0];if(!file)return;
+ alhImportBook(file,rows=>{
+  let added=0,updated=0,errors=[];
+  rows.forEach((r,i)=>{
+   const o={};Object.keys(r).forEach(k=>o[alhNorm(k)]=r[k]);
+   const nis=String(o.nis||'').trim(),nama=String(o.nama||'').trim();
+   if(!nis||!nama){errors.push(`Baris ${i+2}: NIS dan Nama wajib diisi`);return}
+   const jk=String(o['jenis kelamin']||o.jk||'L').toUpperCase().startsWith('P')?'P':'L';
+   const data={nis,nama,jk,kelas:String(o.kelas||'').trim(),ttl:String(o.ttl||''),alamat:String(o.alamat||''),wali:String(o.wali||'')};
+   const old=S.find(x=>String(x.nis).trim()===nis);
+   if(old){Object.assign(old,data);updated++}else{data.id=nid(S);S.push(data);added++}
+  });
+  sv('santri',S);alert(`Impor santri selesai.\nDitambahkan: ${added}\nDiperbarui: ${updated}\nBaris bermasalah: ${errors.length}\n${errors.slice(0,5).join('\n')}`);R();
+ });
+ input.value='';
+}
+function alhImportGuru(input){
+ const file=input.files?.[0];if(!file)return;
+ alhImportBook(file,rows=>{
+  let added=0,updated=0,errors=[];
+  rows.forEach((r,i)=>{
+   const o={};Object.keys(r).forEach(k=>o[alhNorm(k)]=r[k]);
+   const nip=String(o.nip||o['nip/id']||'').trim(),nama=String(o.nama||'').trim(),phone=String(o['no hp']||o.hp||o.telepon||'').trim();
+   if(!nip||!nama||!phone){errors.push(`Baris ${i+2}: NIP, Nama, dan No HP wajib diisi`);return}
+   const mapels=alhSplit(o['mata pelajaran']||o.mapel),kelasAjar=alhSplit(o['kelas diajar']||o.kelas);
+   const waliKelas=alhSplit(o['wali kelas']);
+   const data={nip,nama,phone,mapels,mapel:mapels[0]||'',kelasAjar,waliKelas,username:phone,password:String(o.password||'123456'),pendidikan:String(o.pendidikan||''),jabatan:String(o.jabatan||''),bio:String(o.bio||''),foto:String(o['foto url']||o.foto||'')};
+   const old=G.find(x=>String(x.nip).trim()===nip||String(x.phone||'').replace(/\D/g,'')===phone.replace(/\D/g,''));
+   if(old){Object.assign(old,data);updated++}else{data.id=nid(G);G.push(data);added++}
+  });
+  sv('guru',G);alert(`Impor guru selesai.\nDitambahkan: ${added}\nDiperbarui: ${updated}\nBaris bermasalah: ${errors.length}\n${errors.slice(0,5).join('\n')}`);R();
+ });
+ input.value='';
+}
+function pS(){
+ return `<h3>Data Santri</h3>
+ <div class="import-panel"><b>Impor Data Santri dari Excel</b><p class="muted-note">Gunakan template agar judul kolom terbaca dengan benar. Jika NIS sudah ada, data santri tersebut akan diperbarui.</p><div class="import-actions"><button class="btn o" onclick="alhDownloadDataTemplate('santri')">Unduh Template Santri</button><label class="btn" style="cursor:pointer">Pilih Excel Santri<input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="alhImportSantri(this)"></label></div></div>
+ <form class="noprint" onsubmit="return addS(this)"><div class="f2"><div><label>NIS</label><input name="nis" required></div><div><label>Nama</label><input name="nama" required></div><div><label>L/P</label><select name="jk"><option>L</option><option>P</option></select></div><div><label>Kelas</label><input name="kelas" required></div><div><label>TTL</label><input name="ttl"></div><div><label>Wali</label><input name="wali"></div></div><label>Alamat</label><input name="alamat"><br><button class="btn">+ Tambah Santri</button></form><br><div class="sc"><table><tr><th>NIS</th><th>Nama</th><th>L/P</th><th>Kelas</th><th>Wali</th><th></th></tr>${S.map(s=>`<tr><td>${e(s.nis)}</td><td>${e(s.nama)}</td><td>${e(s.jk)}</td><td>${e(s.kelas)}</td><td>${e(s.wali)}</td><td><button class="btn r s" onclick="del('santri',${s.id})">Hapus</button></td></tr>`).join('')}</table></div>`;
+}
+function addS(f){const d=Object.fromEntries(new FormData(f));if(S.some(x=>String(x.nis)===String(d.nis))){alert('NIS sudah terdaftar.');return false}d.id=nid(S);S.push(d);sv('santri',S);R();return false}
+function pG(){
+ return `<h3>Data Guru, Penugasan & Akun</h3>
+ <p class="muted-note">Login guru menggunakan nomor HP. Isi mata pelajaran dan kelas yang diajar dengan pemisah titik koma (;). Pilih kelas wali kelas untuk memberikan akses ke leger kelas tersebut.</p>
+ <div class="import-panel"><b>Impor Data Guru dari Excel</b><p class="muted-note">Kolom wajib: NIP, Nama, No HP. Kolom mapel/kelas/wali kelas dapat berisi beberapa data dipisahkan titik koma.</p><div class="import-actions"><button class="btn o" onclick="alhDownloadDataTemplate('guru')">Unduh Template Guru</button><label class="btn" style="cursor:pointer">Pilih Excel Guru<input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="alhImportGuru(this)"></label></div></div>
+ <form onsubmit="return addG(this)"><div class="f2"><div><label>NIP/ID</label><input name="nip" required></div><div><label>Nama Guru</label><input name="nama" required></div><div><label>No. HP untuk Login</label><input name="phone" type="tel" placeholder="08xxxxxxxxxx" required></div><div><label>Mata Pelajaran (pisahkan ;)</label><input name="mapels" placeholder="Fiqih; Bahasa Arab" required></div><div><label>Kelas yang Diajar (pisahkan ;)</label><input name="kelasAjar" placeholder="VII A; VIII A" required></div><div><label>Kelas Wali Kelas (opsional)</label><input name="waliKelas" placeholder="VII A"></div><div><label>Password Awal</label><input name="password" placeholder="Kosongkan = 123456"></div><div><label>Pendidikan</label><input name="pendidikan" placeholder="S1 Pendidikan ..."></div><div><label>Jabatan</label><input name="jabatan" placeholder="Guru Fiqih"></div><div><label>Foto Profil URL</label><input name="foto" placeholder="https://..."></div></div><label>Biografi Singkat</label><textarea name="bio" rows="3"></textarea><br><button class="btn">+ Tambah Guru</button></form>
+ <div class="sc" style="margin-top:18px"><table><tr><th>NIP</th><th>Nama</th><th>No. HP</th><th>Mapel</th><th>Kelas</th><th>Wali Kelas</th><th>Password</th><th>Aksi</th></tr>${G.map((g,i)=>`<tr><td>${e(g.nip)}</td><td>${e(g.nama)}</td><td><input value="${e(g.phone||'')}" placeholder="08..." onchange="G[${i}].phone=this.value;G[${i}].username=this.value;sv('guru',G)"></td><td><input value="${e(alhTeacherSubjects(g).join('; '))}" onchange="G[${i}].mapels=alhSplit(this.value);G[${i}].mapel=G[${i}].mapels[0]||'';sv('guru',G)" style="min-width:160px"></td><td><input value="${e(alhTeacherClasses(g).join('; '))}" onchange="G[${i}].kelasAjar=alhSplit(this.value);sv('guru',G)" style="min-width:130px"></td><td><input value="${e(alhSplit(g.waliKelas).join('; '))}" onchange="G[${i}].waliKelas=alhSplit(this.value);sv('guru',G)" style="min-width:120px"></td><td><input value="${e(g.password||'123456')}" onchange="G[${i}].password=this.value;sv('guru',G)" style="min-width:90px"></td><td><button class="btn r s" onclick="del('guru',${g.id})">Hapus</button></td></tr>`).join('')}</table></div>`;
+}
+function addG(f){
+ const d=Object.fromEntries(new FormData(f));const phone=String(d.phone||'').replace(/\s/g,'');
+ if(G.some(x=>String(x.phone||'').replace(/\s/g,'')===phone)){alert('Nomor HP sudah digunakan akun guru lain.');return false}
+ d.id=nid(G);d.phone=phone;d.username=phone;d.mapels=alhSplit(d.mapels);d.mapel=d.mapels[0]||'';d.kelasAjar=alhSplit(d.kelasAjar);d.waliKelas=alhSplit(d.waliKelas);d.password=d.password||'123456';G.push(d);sv('guru',G);R();return false;
+}
+function profilGuru(){
+ const list=G.filter(g=>g.nama);
+ return `<div class="wrap"><div class="sh"><small>KENALI PENDIDIK KAMI</small><h3>Profil Guru & Tenaga Pendidik</h3><i></i><p>Para pendidik Pondok Pesantren Al-Husna Marindal.</p></div><div class="profile-grid">${list.map(g=>`<article class="teacher-card"><div class="photo">${g.foto?`<img src="${e(g.foto)}" alt="Foto ${e(g.nama)}" onerror="this.parentElement.textContent='👤'">`:'👤'}</div><div class="body"><h3>${e(g.nama)}</h3><div class="meta">${e(g.jabatan||'Tenaga Pendidik')}<br>${e(g.pendidikan||'')}<br><b>Mata Pelajaran:</b> ${e(alhTeacherSubjects(g).join(', ')||g.mapel||'—')}</div><p>${e(g.bio||'Pendidik Pondok Pesantren Al-Husna.')}</p></div></article>`).join('')||'<p>Profil guru akan ditampilkan di sini.</p>'}</div></div>`;
+}
+function alhTeacherLogin(f){
+ const d=Object.fromEntries(new FormData(f)),phone=String(d.phone||'').replace(/\D/g,'');
+ const g=G.find(x=>String(x.phone||'').replace(/\D/g,'')===phone&&(x.password||'123456')===d.password);
+ if(!g){alert('Nomor HP atau password tidak sesuai. Hubungi admin pesantren.');return false}
+ ALH_ACTIVE_TEACHER=String(g.id);sessionStorage.alhTeacher=ALH_ACTIVE_TEACHER;window.alhTeacherClass='';window.alhTeacherTerm=ALH_TERM;window.alhTeacherSubject=alhTeacherSubjects(g)[0]||g.mapel;R();return false;
+}
+function alhTeacherLogout(){ALH_ACTIVE_TEACHER='';sessionStorage.removeItem('alhTeacher');R()}
+function guruPortal(){
+ if(!ALH_ACTIVE_TEACHER)return `<div class="card" style="max-width:520px;margin:25px auto"><h3>Portal Guru</h3><p class="muted-note">Masuk menggunakan nomor HP yang terdaftar pada admin.</p><form onsubmit="return alhTeacherLogin(this)"><label>Nomor HP</label><input name="phone" type="tel" inputmode="tel" required placeholder="08xxxxxxxxxx"><label>Password</label><input name="password" type="password" required><br><button class="btn" style="margin-top:15px">Masuk Portal Guru</button></form></div>`;
+ const g=G.find(x=>String(x.id)===String(ALH_ACTIVE_TEACHER));if(!g){alhTeacherLogout();return guruPortal()}
+ const subjects=alhTeacherSubjects(g),classes=alhTeacherClasses(g),subjectName=window.alhTeacherSubject||subjects[0]||g.mapel,cls=window.alhTeacherClass||classes[0]||'',subject=alhSubjectByName(subjectName),students=S.filter(s=>s.kelas===cls),term=window.alhTeacherTerm||ALH_TERM;
+ const rows=students.map(st=>`<tr><td>${e(st.nis)}</td><td>${e(st.nama)}</td><td><input data-alh-score data-student="${st.id}" type="number" min="0" max="100" value="${(N[alhScoreKey(st.id,term)]||{})[subjectName]??''}" placeholder="0–100"></td></tr>`).join('');
+ return `<div class="card"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><h3>Portal Guru</h3><b>${e(g.nama)}</b><div class="muted-note">Nomor HP: ${e(g.phone||'—')}</div></div><button class="btn r" onclick="alhTeacherLogout()">Keluar</button></div>
+ <div class="f2" style="margin-top:18px"><div><label>Mata Pelajaran</label><select id="alhSubject" onchange="window.alhTeacherSubject=this.value;guruPortal()">${subjects.map(x=>`<option value="${e(x)}" ${x===subjectName?'selected':''}>${e(x)}</option>`).join('')}</select></div><div><label>Kelas yang Diajar</label><select id="alhClass" onchange="window.alhTeacherClass=this.value;guruPortal()">${classes.map(c=>`<option value="${e(c)}" ${c===cls?'selected':''}>${e(c)}</option>`).join('')}</select></div><div><label>Semester / Tahun Ajaran</label><input id="alhTermTeacher" value="${e(term)}" onchange="window.alhTeacherTerm=this.value"></div></div>
+ <div class="editor-actions" style="margin:14px 0"><button class="btn o" onclick="alhDownloadTemplate()">Unduh Template Excel</button><label class="btn" style="cursor:pointer">Impor Nilai Excel<input type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="alhImportGrades(this)"></label><button class="btn" onclick="alhSaveTeacherGrades()">Kirim Nilai</button></div><div id="alhImportStatus" class="muted-note"></div>
+ <h4>Daftar Nilai ${e(subjectName)} ${subject?.ar?`<span class="arabic">${e(subject.ar)}</span>`:''}</h4><div class="sc"><table><tr><th>NIS</th><th>Nama Santri</th><th>Nilai / الدرجة</th></tr>${rows||'<tr><td colspan="3">Belum ada santri pada kelas ini.</td></tr>'}</table></div><p class="muted-note">Guru hanya dapat mengisi mapel dan kelas yang ditugaskan admin. Nilai yang dikirim dihimpun pada leger kelas.</p></div>`;
+}
+function alhDownloadTemplate(){
+ if(!alhNeedXLSX())return;const g=G.find(x=>String(x.id)===String(ALH_ACTIVE_TEACHER));if(!g)return;
+ const cls=document.getElementById('alhClass')?.value||'',subject=window.alhTeacherSubject||alhTeacherSubjects(g)[0]||g.mapel;
+ const rows=[['NIS','Nama Santri','Kelas','Nilai']];S.filter(s=>!cls||s.kelas===cls).forEach(s=>rows.push([s.nis,s.nama,s.kelas,'']));
+ const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=[{wch:16},{wch:30},{wch:14},{wch:12}];XLSX.utils.book_append_sheet(wb,ws,'Nilai');XLSX.writeFile(wb,'Template_'+subject.replace(/[^a-z0-9]/gi,'_')+'_'+cls.replace(/\W/g,'_')+'.xlsx');
+}
+function alhImportGrades(input){
+ if(!alhNeedXLSX()||!input.files?.[0])return;const g=G.find(x=>String(x.id)===String(ALH_ACTIVE_TEACHER));if(!g)return;
+ const cls=document.getElementById('alhClass')?.value||'',term=document.getElementById('alhTermTeacher')?.value||ALH_TERM,subjectName=window.alhTeacherSubject||alhTeacherSubjects(g)[0]||g.mapel;
+ alhImportBook(input.files[0],rows=>{
+  let ok=0,errors=[];rows.forEach((r,i)=>{const o={};Object.keys(r).forEach(k=>o[alhNorm(k)]=r[k]);const nis=String(o.nis||'').trim(),score=String(o.nilai??'').trim(),st=S.find(x=>String(x.nis).trim()===nis&&x.kelas===cls);
+   if(!nis||score===''||!st){errors.push(`Baris ${i+2}: NIS/nilai tidak valid atau bukan kelas ${cls}`);return}
+   const n=Number(score);if(!Number.isFinite(n)||n<0||n>100){errors.push(`Baris ${i+2}: nilai harus 0–100`);return}
+   const key=alhScoreKey(st.id,term);N[key]=N[key]||{};N[key][subjectName]=n;ok++;
+  });
+  sv('nilai',N);ALH_SUBMISSIONS[term+'|'+subjectName+'|'+cls]={teacher:g.nama,subject:subjectName,term,kelas:cls,count:ok,status:'Dikirim',updated:new Date().toISOString(),errors};alhSaveSubmissions();
+  const el=document.getElementById('alhImportStatus');if(el)el.innerHTML=`<b>${ok} nilai berhasil diimpor.</b> ${errors.length?'<br>'+errors.slice(0,8).map(e).join('<br>'):''}`;
+ });input.value='';
+}
+function alhSaveTeacherGrades(){
+ const g=G.find(x=>String(x.id)===String(ALH_ACTIVE_TEACHER));if(!g)return;
+ const cls=document.getElementById('alhClass')?.value||'',term=document.getElementById('alhTermTeacher')?.value||ALH_TERM,subjectName=window.alhTeacherSubject||alhTeacherSubjects(g)[0]||g.mapel;
+ if(!alhTeacherSubjects(g).includes(subjectName)||!alhTeacherClasses(g).includes(cls)){alert('Penugasan mapel/kelas tidak valid.');return}
+ let count=0;document.querySelectorAll('[data-alh-score]').forEach(inp=>{const st=S.find(x=>String(x.id)===String(inp.dataset.student));if(!st||st.kelas!==cls)return;const v=inp.value.trim();if(v==='')return;const n=Number(v);if(Number.isFinite(n)&&n>=0&&n<=100){const key=alhScoreKey(st.id,term);N[key]=N[key]||{};N[key][subjectName]=n;count++}});
+ sv('nilai',N);ALH_SUBMISSIONS[term+'|'+subjectName+'|'+cls]={teacher:g.nama,subject:subjectName,term,kelas:cls,count,status:'Dikirim',updated:new Date().toISOString(),errors:[]};alhSaveSubmissions();alert('Nilai '+subjectName+' berhasil disimpan untuk '+count+' santri.');guruPortal();
+}
+function legerPage(){
+ const teacher=G.find(x=>String(x.id)===String(ALH_ACTIVE_TEACHER)),allClasses=[...new Set(S.map(s=>s.kelas))],cls=window.alhLegerClass||allClasses[0]||'',term=window.alhLegerTerm||ALH_TERM;
+ const allowed=!!adm||(!!teacher&&alhIsWali(teacher,cls));
+ if(!allowed)return `<div class="card"><h3>Akses Leger Nilai Terbatas</h3><p>Leger hanya dapat diakses admin atau wali kelas yang ditugaskan.</p>${!teacher?'<a class="btn" href="#guru">Login Guru</a>':''}</div>`;
+ const students=S.filter(s=>s.kelas===cls),subjects=ALH_MAPELS;
+ const body=students.map(st=>{const vals=N[alhScoreKey(st.id,term)]||{};return `<tr><td>${e(st.nis)}</td><td>${e(st.nama)}</td>${subjects.map(m=>`<td>${vals[m.nama]??'—'}</td>`).join('')}<td>${(()=>{const v=subjects.map(m=>vals[m.nama]).filter(x=>x!==''&&x!=null).map(Number);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'—'})()}</td></tr>`}).join('');
+ return `<div class="card"><div class="leg-head"><div><h3>Leger Nilai Kelas ${e(cls)}</h3><p class="muted-note">Rekap seluruh mata pelajaran untuk wali kelas dan admin.</p></div>${adm?'<span class="badge">Admin</span>':`<span class="badge">Wali Kelas: ${e(teacher.nama)}</span>`}</div><div class="f2"><div><label>Kelas</label><select onchange="window.alhLegerClass=this.value;R()">${allClasses.map(c=>`<option ${c===cls?'selected':''}>${e(c)}</option>`).join('')}</select></div><div><label>Semester / Tahun</label><input value="${e(term)}" onchange="window.alhLegerTerm=this.value;R()"></div></div><div class="sc" style="margin-top:16px"><table><tr><th>NIS</th><th>Nama Santri</th>${subjects.map(m=>`<th>${e(m.nama)}<span class="arabic">${e(m.ar)}</span></th>`).join('')}<th>Rata-rata</th></tr>${body||`<tr><td colspan="${subjects.length+3}">Belum ada santri di kelas ini.</td></tr>`}</table></div><div class="import-actions" style="margin-top:14px"><button class="btn o" onclick="print()">Cetak Leger</button></div></div>`;
+}
+
 </script></body></html>
