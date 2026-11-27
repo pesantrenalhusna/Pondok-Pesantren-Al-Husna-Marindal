@@ -62,3 +62,14 @@ PEMBARUAN KTA SANTRI
 - Pada menu Admin > KTA, pilih satu santri lalu unggah foto formal. Foto diperkecil sebelum disimpan pada data santri di browser.
 - Pilih Cetak KTA. Untuk kartu dua sisi, gunakan opsi cetak duplex/bolak-balik pada printer.
 - QR dibuat menggunakan pustaka QRCode.js dari CDN, sehingga koneksi internet diperlukan saat pertama kali memuat pustaka QR.
+
+
+PEMBARUAN TATA LETAK RAPOR A4
+- Rapor menggunakan kertas A4 portrait dengan margin cetak 8 mm.
+- Lebar tabel dikunci 100% dan menggunakan table-layout fixed agar tidak melebar keluar halaman.
+- Lebar kolom diatur: No. 6%, Mata Pelajaran 40%, KKM 8%, Nilai 9%, Predikat 14%, Keterangan 23%.
+- Ukuran font dan padding cetak diperkecil secara proporsional agar lebih banyak isi termuat dengan tetap terbaca.
+- Header tabel diulang otomatis pada halaman lanjutan.
+- Baris mata pelajaran dan bagian rata-rata/tanda tangan dijaga agar tidak terbelah antarhalaman.
+- Jika seluruh daftar mata pelajaran tidak muat di halaman pertama, browser melanjutkannya ke halaman kedua secara otomatis. Tidak ada page-break paksa yang membuat halaman kosong.
+- Saat mencetak, pilih ukuran kertas A4, orientasi Portrait, skala 100% atau Default, dan matikan header/footer browser.
