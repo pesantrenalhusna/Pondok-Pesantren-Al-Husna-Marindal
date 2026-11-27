@@ -16,6 +16,25 @@ B. LANGKAH ADMIN (sekali di awal)
    Santri baru di tengah tahun: pilih "Mulai bulan" sesuai bulan masuk.
 4. Umumkan ke wali: buka menu "Portal Wali" > "Daftar Akun Baru" di website. Tidak perlu kirim PIN satu per satu.
 
+B2. IMPOR EXCEL (BENDAHARA)
+Admin > Pembayaran SPP > Impor Excel.
+1. Klik "Unduh Template". Satu baris = satu santri. Kolom: NIS, Nama, Kelas, Jenjang, Wali, No HP Wali,
+   Tarif/Bulan (opsional), lalu Juli sampai Juni.
+2. Isi kolom bulan: Lunas / tanda centang / nominal yang dibayar / tanggal bayar = sudah dibayar.
+   Kosong atau Belum = belum dibayar (tagihan tetap dibuat). Tanda "-" = tidak ada tagihan bulan itu.
+3. Pilih tahun ajaran, pilih file, lalu periksa PRATINJAU (santri baru, tagihan baru, ditandai lunas, catatan).
+   Belum ada yang tersimpan sampai tombol "Terapkan Impor" ditekan.
+4. Setelah diterapkan, tagihan langsung terbaca di Portal Wali. Wali hanya melihat bulan yang masih belum lunas.
+Catatan:
+- Santri dengan NIS yang belum ada ditambahkan otomatis (bisa dimatikan lewat kotak centang).
+- Jenjang kosong dideteksi dari kelas. Tarif kosong memakai tarif jenjang di Pengaturan & Tarif.
+- Nominal kurang dari tarif tidak dianggap lunas (cicilan belum didukung) dan ditandai di catatan.
+- Bulan yang sudah lunas tidak diubah menjadi belum. Bulan yang sedang menunggu verifikasi wali dilewati.
+- Impor aman diulang: data yang sama tidak digandakan. "Unduh Data Saat Ini" menghasilkan file berformat sama.
+- Pembayaran dari impor tercatat dengan metode "Impor Excel" dan kwitansinya bisa dicetak.
+- No HP Wali membantu verifikasi akun wali (muncul tanda centang bila nomor sesuai saat wali mendaftar).
+- Membutuhkan koneksi internet (pustaka Excel dimuat dari CDN).
+
 C. LANGKAH WALI SANTRI
 1. Pertama kali: Portal Wali > Daftar Akun Baru. Isi nama, nomor HP, password (min. 6 karakter), dan NIS anak
    (boleh lebih dari satu, pisahkan koma). Akun aktif setelah diverifikasi admin.
