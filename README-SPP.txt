@@ -14,19 +14,24 @@ B. LANGKAH ADMIN (sekali di awal)
 3. Pembayaran SPP > Tagihan & Status: pilih tahun ajaran, klik "Terbitkan". Tagihan 12 bulan (Juli-Juni)
    dibuat sesuai tarif jenjang masing-masing. Aman dijalankan ulang untuk santri baru (tidak duplikat).
    Santri baru di tengah tahun: pilih "Mulai bulan" sesuai bulan masuk.
-4. Pembayaran SPP > Akses Wali: klik "Buat PIN untuk yang belum punya", lalu unduh daftar akses (Excel)
-   dan bagikan PIN ke masing-masing wali secara pribadi.
+4. Umumkan ke wali: buka menu "Portal Wali" > "Daftar Akun Baru" di website. Tidak perlu kirim PIN satu per satu.
 
 C. LANGKAH WALI SANTRI
-1. Buka menu "Portal Wali", masuk dengan NIS santri + PIN. Wali yang punya beberapa anak dapat menekan
-   "+ Tambah anak" (NIS + PIN anak berikutnya).
-2. Lihat tagihan per bulan (Lunas / Menunggu verifikasi / Belum / Terlambat) dan riwayat pembayaran.
-3. Centang bulan yang ingin dibayar > Bayar Sekarang > transfer sesuai nominal (ada kode unik 3 digit
+1. Pertama kali: Portal Wali > Daftar Akun Baru. Isi nama, nomor HP, password (min. 6 karakter), dan NIS anak
+   (boleh lebih dari satu, pisahkan koma). Akun aktif setelah diverifikasi admin.
+2. Setelah disetujui: masuk dengan nomor HP + password. Anak lain dapat diajukan lewat "+ Tambah anak"
+   (perlu persetujuan admin). Password dapat diganti lewat "Ganti password".
+3. Lupa password: hubungi sekretariat. Admin menekan "Reset password", lalu mengirim password baru ke wali
+   (tersedia tombol kirim lewat WhatsApp). Saat masuk, wali diminta membuat password baru sendiri.
+4. Lihat tagihan per bulan (Lunas / Menunggu verifikasi / Belum / Terlambat) dan riwayat pembayaran.
+5. Centang bulan yang ingin dibayar > Bayar Sekarang > transfer sesuai nominal (ada kode unik 3 digit
    agar mudah dicocokkan) > unggah foto bukti.
-4. Setelah admin verifikasi, status menjadi Lunas dan wali dapat mencetak kwitansi.
+6. Setelah admin verifikasi, status menjadi Lunas dan wali dapat mencetak kwitansi.
    Pembayaran yang bukti-nya tidak diunggah dalam 48 jam dibatalkan otomatis.
 
 D. LANGKAH ADMIN HARIAN
+- Tab Akun Wali: setujui/tolak pendaftaran (cocokkan nama wali dan anak dengan data santri), reset password,
+  hubungkan atau lepas anak, nonaktifkan akun.
 - Tab Verifikasi: cek bukti dan mutasi rekening, lalu Verifikasi (Lunas) atau Tolak (isi alasan, terlihat wali).
 - Tab Tagihan & Status: klik kotak bulan untuk catat bayar TUNAI, ubah nominal, hapus tagihan, cetak kwitansi
   atau batalkan pelunasan. Filter per jenjang, kelas, atau nama.
@@ -38,7 +43,7 @@ Seperti modul lain di website ini, data SPP tersimpan di localStorage browser:
 - Data yang diinput admin hanya ada di browser admin. Wali yang membuka dari HP-nya TIDAK melihat data itu,
   dan bukti yang diunggah wali TIDAK sampai ke admin. Jadi alur wali <-> admin baru berjalan nyata
   setelah website dihubungkan ke database bersama.
-- PIN dan login hanya pembatas tampilan, bukan keamanan server. Jangan dipakai untuk uang/data asli
+- Login (nomor HP + password, disimpan terenkripsi hash di browser) hanya pembatas tampilan, bukan keamanan server. Jangan dipakai untuk uang/data asli
   sebelum ada backend.
 - Pembayaran masih manual (transfer/QRIS statis + verifikasi admin). Pembayaran otomatis (Midtrans, Xendit,
   dsb.) membutuhkan server untuk membuat transaksi dan menerima notifikasi pembayaran; tidak bisa dari

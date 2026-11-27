@@ -11,7 +11,7 @@
 const SPP_J = ['MIS', 'SMP', 'SMA'];
 const SPP_BLN = ['Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'];
 const SPP_EXPIRE_JAM = 48;
-const SPP_W = { cur: null, pick: [], ta: null, view: 'list', pay: null, addOpen: false };
+const SPP_W = { cur: null, pick: [], ta: null, view: 'list', pay: null, addOpen: false, mode: 'masuk' };
 let sppSub = 'ringkas';
 const sppF = { j: '', k: '', q: '', ta: null, vs: 'Menunggu Verifikasi', vj: '' };
 
@@ -190,41 +190,87 @@ function sppReleaseBills(p, bills) { bills.forEach(b => { if (p.billIds.includes
 /* =====================================================================
    PORTAL WALI SANTRI
    ===================================================================== */
-function sppWaliIds() { let a = []; try { a = JSON.parse(sessionStorage.alhWaliIds || '[]'); } catch (x) { } return a.map(String).filter(id => sppSantri(id)); }
-function sppLoginView() {
-  return `<div class="card" style="max-width:460px"><h3>Masuk Wali Santri</h3>
-<p class="muted-note">Masuk dengan NIS santri dan PIN Wali yang diberikan sekretariat pesantren. Jika memiliki lebih dari satu anak, anak berikutnya dapat ditambahkan setelah masuk.</p>
-<form onsubmit="return sppWaliLogin(this)"><label>NIS Santri</label><input name="nis" required autocomplete="off"><label>PIN Wali</label><input name="pin" type="password" inputmode="numeric" required autocomplete="off"><br><button class="btn">Masuk</button></form><div id="sppLoginMsg"></div></div>`;
+/* ---------- akun wali: daftar dengan No. HP, diverifikasi admin ---------- */
+const sppPhone = v => { let d = String(v || '').replace(/\D/g, ''); if (d.startsWith('62')) d = '0' + d.slice(2); else if (d.startsWith('8')) d = '0' + d; return d; };
+async function sppHash(pw, salt) {
+  try { const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(salt + '|' + pw)); return 'h1:' + [...new Uint8Array(h)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+  catch (x) { return 'p0:' + pw; }
 }
-function sppWaliLogin(f) {
-  const d = Object.fromEntries(new FormData(f)), msg = document.getElementById('sppLoginMsg') || document.getElementById('sppAddMsg');
+function sppWaliAcc() { const id = sessionStorage.alhWaliAcc; if (!id) return null; return sppLoad('wali', []).find(a => a.id === id && a.status === 'Aktif') || null; }
+function sppWaliIds() { const a = sppWaliAcc(); return a ? (a.anak || []).map(String).filter(id => sppSantri(id)) : []; }
+function sppNisList(v) { return [...new Set(String(v || '').split(/[,;\s]+/).map(x => x.trim()).filter(Boolean))]; }
+function sppSay(t, ok) { const m = document.getElementById('sppLoginMsg'); if (m) m.innerHTML = ok ? `<div class="msg">${e(t)}</div>` : `<div class="spp-warn">${e(t)}</div>`; }
+
+function sppLoginView() {
+  const daftar = SPP_W.mode === 'daftar', cfg = sppCfg();
+  const tabs = `<div class="tabs"><button class="${!daftar ? 'on' : ''}" onclick="SPP_W.mode='masuk';R()">Masuk</button><button class="${daftar ? 'on' : ''}" onclick="SPP_W.mode='daftar';R()">Daftar Akun Baru</button></div>`;
+  const wa = cfg.wa ? ` <a href="${sppWaLink(cfg.wa, 'Assalamu’alaikum, saya wali santri dan lupa password Portal Wali.')}" target="_blank" rel="noopener">Hubungi via WhatsApp</a>` : '';
+  if (!daftar) return `<div class="card" style="max-width:460px"><h3>Portal Wali Santri</h3>${tabs}<form onsubmit="sppWaliLogin(event);return false"><label>Nomor HP</label><input name="hp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx" required autocomplete="username"><label>Password</label><input name="pw" type="password" required autocomplete="current-password"><br><button class="btn">Masuk</button></form><div id="sppLoginMsg"></div><p class="muted-note">Belum punya akun? Pilih “Daftar Akun Baru”. Lupa password? Hubungi sekretariat pesantren untuk mendapat password baru.${wa}</p></div>`;
+  return `<div class="card" style="max-width:460px"><h3>Portal Wali Santri</h3>${tabs}<form onsubmit="sppWaliRegister(event);return false"><label>Nama wali</label><input name="nama" required><label>Nomor HP (untuk masuk)</label><input name="hp" type="tel" inputmode="tel" placeholder="08xxxxxxxxxx" required><label>Buat password (min. 6 karakter)</label><input name="pw" type="password" minlength="6" required autocomplete="new-password"><label>Ulangi password</label><input name="pw2" type="password" minlength="6" required autocomplete="new-password"><label>NIS anak (pisahkan koma jika lebih dari satu)</label><input name="nis" required placeholder="mis. 2024001, 2024002"><br><button class="btn">Kirim Pendaftaran</button></form><div id="sppLoginMsg"></div><p class="muted-note">Akun aktif setelah diverifikasi sekretariat pesantren.</p></div>`;
+}
+async function sppWaliRegister(ev) {
+  ev.preventDefault(); const f = ev.target, d = Object.fromEntries(new FormData(f)), hp = sppPhone(d.hp);
+  if (hp.length < 9 || hp.length > 14) return sppSay('Nomor HP tidak valid.');
+  if (String(d.pw).length < 6) return sppSay('Password minimal 6 karakter.');
+  if (d.pw !== d.pw2) return sppSay('Ulangi password tidak sama.');
+  const nis = sppNisList(d.nis); if (!nis.length) return sppSay('Isi NIS anak.');
+  const miss = nis.filter(n => !S.some(s => String(s.nis).trim() === n)); if (miss.length) return sppSay('NIS tidak ditemukan: ' + miss.join(', ') + '. Periksa kembali.');
+  const list = sppLoad('wali', []); if (list.some(a => a.hp === hp)) return sppSay('Nomor HP sudah terdaftar. Jika lupa password, hubungi sekretariat.');
+  const id = sppUid('w_');
+  list.push({ id, nama: String(d.nama).trim(), hp, hash: await sppHash(d.pw, id), anak: [], anakReq: nis, status: 'Menunggu', createdAt: new Date().toISOString() });
+  if (!sppSave('wali', list)) return;
+  f.reset(); sppSay('Pendaftaran terkirim. Mohon tunggu verifikasi sekretariat, lalu masuk dengan nomor HP dan password Anda.', true);
+}
+async function sppWaliLogin(ev) {
+  ev.preventDefault(); const d = Object.fromEntries(new FormData(ev.target)), hp = sppPhone(d.hp);
   let fail = {}; try { fail = JSON.parse(sessionStorage.alhWaliFail || '{}'); } catch (x) { }
-  const say = t => { if (msg) msg.innerHTML = `<div class="spp-warn">${e(t)}</div>`; };
-  if (fail.until && Date.now() < fail.until) { say('Terlalu banyak percobaan gagal. Coba lagi beberapa menit lagi.'); return false; }
-  const s = S.find(x => String(x.nis).trim() === String(d.nis).trim());
-  if (!s || !s.pinWali || String(s.pinWali) !== String(d.pin).trim()) {
-    fail.n = (fail.n || 0) + 1; if (fail.n >= 5) { fail = { n: 0, until: Date.now() + 5 * 60e3 }; }
-    sessionStorage.alhWaliFail = JSON.stringify(fail); say('NIS atau PIN tidak cocok.'); return false;
+  if (fail.until && Date.now() < fail.until) return sppSay('Terlalu banyak percobaan gagal. Coba lagi beberapa menit lagi.');
+  const a = sppLoad('wali', []).find(x => x.hp === hp);
+  if (!a || (await sppHash(d.pw, a.id)) !== a.hash) {
+    fail.n = (fail.n || 0) + 1; if (fail.n >= 5) fail = { n: 0, until: Date.now() + 5 * 60e3 };
+    sessionStorage.alhWaliFail = JSON.stringify(fail); return sppSay('Nomor HP atau password salah.');
   }
   sessionStorage.alhWaliFail = '{}';
-  const ids = sppWaliIds(); if (!ids.includes(String(s.id))) ids.push(String(s.id));
-  sessionStorage.alhWaliIds = JSON.stringify(ids); SPP_W.cur = String(s.id); SPP_W.view = 'list'; SPP_W.pick = []; SPP_W.addOpen = false;
-  R(); return false;
+  if (a.status === 'Menunggu') return sppSay('Akun Anda masih menunggu verifikasi sekretariat.');
+  if (a.status !== 'Aktif') return sppSay('Akun tidak aktif. Hubungi sekretariat pesantren.');
+  sessionStorage.alhWaliAcc = a.id; SPP_W.cur = null; SPP_W.view = 'list'; SPP_W.pick = []; SPP_W.addOpen = false; R();
 }
-function sppWaliLogout() { sessionStorage.removeItem('alhWaliIds'); SPP_W.cur = null; SPP_W.pick = []; SPP_W.view = 'list'; R(); }
+function sppWaliLogout() { sessionStorage.removeItem('alhWaliAcc'); SPP_W.cur = null; SPP_W.pick = []; SPP_W.view = 'list'; R(); }
+function sppPwView(forced) {
+  return `<div class="card" style="margin-top:14px;max-width:460px"><h3>${forced ? 'Buat Password Baru' : 'Ganti Password'}</h3>${forced ? '<p class="muted-note">Password Anda baru direset oleh sekretariat. Buat password baru untuk melanjutkan.</p>' : ''}<form onsubmit="sppWaliChangePw(event);return false">${forced ? '' : '<label>Password saat ini</label><input name="old" type="password" required>'}<label>Password baru (min. 6 karakter)</label><input name="pw" type="password" minlength="6" required autocomplete="new-password"><label>Ulangi password baru</label><input name="pw2" type="password" minlength="6" required autocomplete="new-password"><br><button class="btn">Simpan</button>${forced ? '' : ' <button type="button" class="btn o" onclick="SPP_W.view=\'list\';R()">Batal</button>'}</form><div id="sppLoginMsg"></div></div>`;
+}
+async function sppWaliChangePw(ev) {
+  ev.preventDefault(); const d = Object.fromEntries(new FormData(ev.target)), list = sppLoad('wali', []), a = list.find(x => x.id === sessionStorage.alhWaliAcc); if (!a) return;
+  if (!a.mustChange && (await sppHash(d.old, a.id)) !== a.hash) return sppSay('Password saat ini salah.');
+  if (String(d.pw).length < 6) return sppSay('Password minimal 6 karakter.'); if (d.pw !== d.pw2) return sppSay('Ulangi password tidak sama.');
+  a.hash = await sppHash(d.pw, a.id); a.mustChange = false; if (!sppSave('wali', list)) return;
+  alert('Password berhasil diganti.'); SPP_W.view = 'list'; R();
+}
+function sppWaliAddKid(ev) {
+  ev.preventDefault(); const nis = String(new FormData(ev.target).get('nis') || '').trim(), list = sppLoad('wali', []), a = list.find(x => x.id === sessionStorage.alhWaliAcc); if (!a || !nis) return;
+  const s = S.find(x => String(x.nis).trim() === nis); if (!s) return sppSay('NIS tidak ditemukan.');
+  if ((a.anak || []).map(String).includes(String(s.id))) return sppSay('Anak ini sudah terhubung ke akun Anda.');
+  a.anakReq = a.anakReq || []; if (a.anakReq.includes(nis)) return sppSay('Pengajuan untuk NIS ini sedang menunggu verifikasi.');
+  a.anakReq.push(nis); if (!sppSave('wali', list)) return; SPP_W.addOpen = false; alert('Pengajuan terkirim. Anak akan muncul setelah diverifikasi sekretariat.'); R();
+}
 function sppWaliSel(id) { SPP_W.cur = String(id); SPP_W.pick = []; SPP_W.view = 'list'; SPP_W.ta = null; R(); }
 function sppWaliTa(v) { SPP_W.ta = Number(v); SPP_W.pick = []; R(); }
 
 function waliPortal() {
+  const acc = sppWaliAcc();
+  if (!acc) { sessionStorage.removeItem('alhWaliAcc'); return sppLoginView(); }
   const ids = sppWaliIds();
-  if (!ids.length) return sppLoginView();
+  if (acc.mustChange) return `<div class="card"><b>${e(acc.nama)}</b></div>` + sppPwView(true);
+  const reqN = (acc.anakReq || []).length, addForm = `<form onsubmit="sppWaliAddKid(event);return false" class="f2" style="align-items:end"><div><label>NIS anak yang ingin ditambahkan</label><input name="nis" required></div><div><button class="btn">Ajukan</button></div></form><div id="sppLoginMsg"></div>`;
+  if (!ids.length) return `<div class="card"><h3 style="margin:0">Assalamu’alaikum, ${e(acc.nama)}</h3><p>${reqN ? 'Data anak Anda masih menunggu verifikasi sekretariat.' : 'Belum ada anak yang terhubung ke akun ini.'}</p>${addForm}<br><button class="btn s r" onclick="sppWaliLogout()">Keluar</button></div>`;
   sppExpire();
   if (!SPP_W.cur || !ids.includes(String(SPP_W.cur))) SPP_W.cur = ids[0];
   const s = sppSantri(SPP_W.cur), cfg = sppCfg(), j = sppJenjang(s);
   const kids = ids.map(id => { const k = sppSantri(id); return `<button class="spp-kid ${String(id) === String(SPP_W.cur) ? 'on' : ''}" onclick="sppWaliSel('${id}')">${e(k.nama)}<br><small>${e(k.kelas)} · ${e(sppJenjang(k) || '-')}</small></button>`; }).join('');
-  const head = `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">Assalamu’alaikum, Wali Santri</h3><span class="muted-note">Data pembayaran SPP putra/putri Anda</span></div><div class="noprint"><button class="btn s o" onclick="SPP_W.addOpen=!SPP_W.addOpen;R()">+ Tambah anak</button> <button class="btn s r" onclick="sppWaliLogout()">Keluar</button></div></div>
+  const head = `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><h3 style="margin:0">Assalamu’alaikum, ${e(acc.nama)}</h3><span class="muted-note">Data pembayaran SPP putra/putri Anda${reqN ? ' · ' + reqN + ' pengajuan anak menunggu verifikasi' : ''}</span></div><div class="noprint"><button class="btn s o" onclick="SPP_W.addOpen=!SPP_W.addOpen;R()">+ Tambah anak</button> <button class="btn s o" onclick="SPP_W.view='pw';R()">Ganti password</button> <button class="btn s r" onclick="sppWaliLogout()">Keluar</button></div></div>
 <div class="spp-kids">${kids}</div>
-${SPP_W.addOpen ? `<form onsubmit="return sppWaliLogin(this)" class="f2" style="align-items:end"><div><label>NIS anak lain</label><input name="nis" required></div><div><label>PIN Wali</label><input name="pin" type="password" inputmode="numeric" required></div><div><button class="btn">Tambahkan</button></div></form><div id="sppAddMsg"></div>` : ''}</div>`;
+${SPP_W.addOpen ? addForm : ''}</div>`;
+  if (SPP_W.view === 'pw') return head + sppPwView(false);
   if (SPP_W.view === 'pay' && SPP_W.pay) return head + sppPayView(SPP_W.pay);
 
   const bills = sppLoad('tagihan', []).filter(b => String(b.sid) === String(s.id));
@@ -336,8 +382,8 @@ function pSPP() {
   sppExpire();
   const cfg = sppCfg(), bills = sppLoad('tagihan', []), pays = sppLoad('bayar', []);
   if (!sppF.ta) sppF.ta = cfg.tahunAjaran;
-  const pend = pays.filter(p => p.status === 'Menunggu Verifikasi').length;
-  const subs = [['ringkas', 'Ringkasan'], ['tagihan', 'Tagihan & Status'], ['verif', 'Verifikasi' + (pend ? ' (' + pend + ')' : '')], ['atur', 'Pengaturan & Tarif'], ['akses', 'Akses Wali']];
+  const pend = pays.filter(p => p.status === 'Menunggu Verifikasi').length, pw = sppLoad('wali', []).filter(a => a.status === 'Menunggu' || (a.anakReq || []).length).length;
+  const subs = [['ringkas', 'Ringkasan'], ['tagihan', 'Tagihan & Status'], ['verif', 'Verifikasi' + (pend ? ' (' + pend + ')' : '')], ['atur', 'Pengaturan & Tarif'], ['akses', 'Akun Wali' + (pw ? ' (' + pw + ')' : '')]];
   const nav = `<div class="tabs noprint">${subs.map(t => `<button class="${sppSub === t[0] ? 'on' : ''}" onclick="sppSub='${t[0]}';T()">${t[1]}</button>`).join('')}</div>`;
   const banner = `<div class="spp-warn noprint"><b>Mode penyimpanan: browser.</b> Data SPP tersimpan di perangkat ini saja. Wali yang membuka website dari HP lain <u>tidak</u> akan melihat data ini sampai website dihubungkan ke database (lihat README-SPP.txt).</div>`;
   const pg = ({ ringkas: sppTabRingkas, tagihan: sppTabTagihan, verif: sppTabVerif, atur: sppTabAtur, akses: sppTabAkses }[sppSub] || sppTabRingkas)(cfg, bills, pays);
@@ -473,7 +519,7 @@ function sppTabAtur(cfg) {
 <label>Petunjuk tambahan untuk wali</label><textarea id="sppPet" rows="3">${e(cfg.petunjuk)}</textarea>
 <label>Gambar QRIS (opsional)</label><input type="file" accept="image/*" onchange="sppQris(this)">${cfg.qris ? `<p><img src="${cfg.qris}" style="max-width:140px" alt="QRIS"> <button class="btn s r" onclick="sppDelQris()">Hapus QRIS</button></p>` : ''}
 <label style="display:flex;gap:8px;align-items:center"><input id="sppUnik" type="checkbox" style="width:auto" ${cfg.kodeUnik ? 'checked' : ''}> Tambahkan kode unik 1–499 pada nominal transfer agar mudah dicocokkan</label><br><button class="btn" onclick="sppSaveCfg()">Simpan Pengaturan</button></div>
-<div class="import-panel"><b>Cadangan Data SPP</b><p class="muted-note">Ekspor seluruh pengaturan, tagihan, dan pembayaran ke file JSON (tanpa data santri). Impor akan <u>menggantikan</u> data SPP di browser ini.</p><button class="btn s o" onclick="sppBackup()">Ekspor JSON</button> <label class="btn s o" style="cursor:pointer">Impor JSON<input type="file" accept="application/json" hidden onchange="sppRestore(this)"></label></div>`;
+<div class="import-panel"><b>Cadangan Data SPP</b><p class="muted-note">Ekspor seluruh pengaturan, tagihan, pembayaran, dan akun wali ke file JSON (tanpa data santri). Impor akan <u>menggantikan</u> data SPP di browser ini.</p><button class="btn s o" onclick="sppBackup()">Ekspor JSON</button> <label class="btn s o" style="cursor:pointer">Impor JSON<input type="file" accept="application/json" hidden onchange="sppRestore(this)"></label></div>`;
 }
 function sppSaveCfg() {
   const g = id => document.getElementById(id), c = { tarif: {} };
@@ -488,7 +534,7 @@ async function sppQris(input) {
 }
 function sppDelQris() { const c = sppCfg(); c.qris = ''; sppSave('cfg', c); T(); }
 function sppBackup() {
-  const data = { versi: 1, dibuat: new Date().toISOString(), cfg: sppLoad('cfg', {}), tagihan: sppLoad('tagihan', []), bayar: sppLoad('bayar', []) };
+  const data = { versi: 1, dibuat: new Date().toISOString(), cfg: sppLoad('cfg', {}), tagihan: sppLoad('tagihan', []), bayar: sppLoad('bayar', []), wali: sppLoad('wali', []) };
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' })); a.download = 'al-husna-data-spp.json'; a.click(); URL.revokeObjectURL(a.href);
 }
 function sppRestore(input) {
@@ -497,30 +543,57 @@ function sppRestore(input) {
     try {
       const d = JSON.parse(r.result); if (!Array.isArray(d.tagihan) || !Array.isArray(d.bayar)) throw Error('format');
       if (!confirm('Data SPP di browser ini akan DIGANTI dengan isi file. Lanjutkan?')) return;
-      sppSave('cfg', d.cfg || {}); sppSave('tagihan', d.tagihan); sppSave('bayar', d.bayar); alert('Data SPP dipulihkan.'); T();
+      sppSave('cfg', d.cfg || {}); sppSave('tagihan', d.tagihan); sppSave('bayar', d.bayar); sppSave('wali', Array.isArray(d.wali) ? d.wali : []); alert('Data SPP dipulihkan.'); T();
     } catch (x) { alert('File tidak valid.'); }
   }; r.readAsText(f); input.value = '';
 }
 
-/* --- Akses wali (PIN) --- */
+/* --- Akun wali --- */
 function sppRandPin() { const a = new Uint32Array(1); crypto.getRandomValues(a); return String(a[0] % 1000000).padStart(6, '0'); }
-function sppGenPin(id) { const s = sppSantri(id); if (!s) return; if (s.pinWali && !confirm('Buat PIN baru? PIN lama tidak berlaku lagi.')) return; s.pinWali = sppRandPin(); sv('santri', S); T(); }
-function sppGenAllPin() { let n = 0; S.forEach(s => { if (!s.pinWali) { s.pinWali = sppRandPin(); n++; } }); sv('santri', S); alert(n + ' PIN baru dibuat.'); T(); }
+function sppAnakInfo(nis) { const s = S.find(x => String(x.nis).trim() === String(nis).trim()); return s ? `<b>${e(s.nama)}</b> (${e(s.kelas)}, ${e(sppJenjang(s) || '-')}) · wali tercatat: ${e(s.wali || '-')}` : `<span style="color:#a11a1a">NIS ${e(nis)} tidak ditemukan</span>`; }
 function sppTabAkses() {
-  const rows = S.map(s => `<tr><td>${e(s.nis)}</td><td>${e(s.nama)}</td><td>${e(s.kelas)}</td><td><span class="spp-badge j-${sppJenjang(s)}">${e(sppJenjang(s) || '-')}</span></td><td>${e(s.wali || '')}</td><td><b style="font-family:monospace;font-size:15px">${e(s.pinWali || '—')}</b></td><td><button class="btn s o" onclick="sppGenPin(${s.id})">${s.pinWali ? 'Reset PIN' : 'Buat PIN'}</button></td></tr>`).join('');
-  return `<p class="muted-note">Wali masuk di menu <b>Portal Wali</b> menggunakan NIS santri + PIN. Bagikan PIN secara langsung/pribadi, jangan di grup. Anak dengan wali yang sama dapat ditambahkan setelah masuk.</p>
-<div class="noprint" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"><button class="btn" onclick="sppGenAllPin()">Buat PIN untuk yang belum punya</button><button class="btn o" onclick="sppExportAkses()">Unduh Daftar Akses (Excel)</button></div>
-<div class="sc"><table><tr><th>NIS</th><th>Nama</th><th>Kelas</th><th>Jenjang</th><th>Wali</th><th>PIN</th><th></th></tr>${rows}</table></div>`;
+  const list = sppLoad('wali', []), pend = list.filter(a => a.status === 'Menunggu' || (a.anakReq || []).length);
+  const pRows = pend.map(a => `<tr><td><b>${e(a.nama)}</b><br><small>${e(a.hp)}</small><br><small>${a.status === 'Menunggu' ? 'Akun baru' : 'Tambah anak'} · ${sppFmtDate(a.createdAt)}</small></td><td style="white-space:normal">${(a.anakReq || []).map(n => '• ' + sppAnakInfo(n)).join('<br>')}</td><td><button class="btn s" onclick="sppWaliApprove('${a.id}')">Setujui</button> <button class="btn s r" onclick="sppWaliRejectReq('${a.id}')">Tolak</button></td></tr>`).join('');
+  const rows = list.map(a => `<tr><td><b>${e(a.nama)}</b><br><small>${e(a.hp)}</small></td><td style="white-space:normal">${(a.anak || []).map(id => { const s = sppSantri(id); return s ? `${e(s.nama)} <span class="spp-badge j-${sppJenjang(s)}">${e(sppJenjang(s) || '-')}</span> <a href="#" title="Lepas" onclick="sppWaliDelAnak('${a.id}','${id}');return false">✕</a>` : ''; }).join('<br>') || '<small>-</small>'}</td><td>${e(a.status)}</td><td><button class="btn s o" onclick="sppWaliReset('${a.id}')">Reset password</button> <button class="btn s o" onclick="sppWaliAddAnak('${a.id}')">+ Anak</button> <button class="btn s o" onclick="sppWaliToggle('${a.id}')">${a.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}</button> <button class="btn s r" onclick="sppWaliDel('${a.id}')">Hapus</button></td></tr>`).join('');
+  return `<p class="muted-note">Wali mendaftar sendiri di menu <b>Portal Wali</b> memakai nomor HP, password, dan NIS anak. Periksa kesesuaian data (nama wali dan anak) sebelum menyetujui. Jika wali lupa password, gunakan <b>Reset password</b> lalu kirimkan password baru ke wali.</p>
+<h4>Menunggu verifikasi (${pend.length})</h4><div class="sc"><table><tr><th>Pendaftar</th><th>Anak yang diajukan (NIS)</th><th></th></tr>${pRows || '<tr><td colspan="3">Tidak ada pendaftaran baru.</td></tr>'}</table></div>
+<h4 style="margin-top:22px">Semua akun wali (${list.length})</h4><div class="sc"><table><tr><th>Wali</th><th>Anak terhubung</th><th>Status</th><th></th></tr>${rows || '<tr><td colspan="4">Belum ada akun wali.</td></tr>'}</table></div>`;
+}
+function sppWaliSave(list) { return sppSave('wali', list); }
+function sppWaliApprove(id) {
+  const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return;
+  const found = [], miss = [];
+  (a.anakReq || []).forEach(n => { const s = S.find(x => String(x.nis).trim() === String(n).trim()); s ? found.push(s) : miss.push(n); });
+  if (!found.length && a.status === 'Menunggu') { alert('Tidak ada NIS yang cocok dengan data santri. Tolak pendaftaran ini.'); return; }
+  if (!confirm(`Setujui ${a.nama} sebagai wali dari: ${found.map(s => s.nama).join(', ') || '-'}?` + (miss.length ? `\nNIS tidak ditemukan (dilewati): ${miss.join(', ')}` : ''))) return;
+  a.anak = [...new Set([...(a.anak || []).map(String), ...found.map(s => String(s.id))])]; a.anakReq = []; a.status = 'Aktif'; a.approvedAt = new Date().toISOString();
+  if (sppWaliSave(list)) T();
+}
+function sppWaliRejectReq(id) {
+  const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a || !confirm('Tolak pengajuan ini?')) return;
+  if (a.status === 'Menunggu') a.status = 'Ditolak'; a.anakReq = [];
+  if (sppWaliSave(list)) T();
+}
+async function sppWaliReset(id) {
+  const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return;
+  if (!confirm('Buat password baru untuk ' + a.nama + '? Password lama tidak berlaku lagi.')) return;
+  const pw = sppRandPin(); a.hash = await sppHash(pw, a.id); a.mustChange = true; if (!sppWaliSave(list)) return;
+  const url = location.origin + location.pathname + '#wali', link = sppWaLink(a.hp, 'Assalamu’alaikum ' + a.nama + '. Password baru Portal Wali Al-Husna: ' + pw + '\nMasuk di ' + url + ' dengan nomor HP ini, lalu Anda akan diminta membuat password baru.');
+  sppModal(`<h3>Password baru</h3><p><b>${e(a.nama)}</b> · ${e(a.hp)}</p><div class="spp-total" style="font-family:monospace">${pw}</div><p class="muted-note">Password ini hanya tampil sekali. Wali akan diminta menggantinya saat masuk.</p><a class="btn" target="_blank" rel="noopener" href="${link}">Kirim lewat WhatsApp</a>`);
+  T();
+}
+function sppWaliToggle(id) { const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return; a.status = a.status === 'Aktif' ? 'Nonaktif' : 'Aktif'; if (sppWaliSave(list)) T(); }
+function sppWaliDel(id) { if (!confirm('Hapus akun wali ini?')) return; if (sppWaliSave(sppLoad('wali', []).filter(x => x.id !== id))) T(); }
+function sppWaliDelAnak(id, sid) { if (!confirm('Lepas anak ini dari akun wali?')) return; const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return; a.anak = (a.anak || []).filter(x => String(x) !== String(sid)); if (sppWaliSave(list)) T(); }
+function sppWaliAddAnak(id) {
+  const nis = prompt('NIS anak yang akan dihubungkan:'); if (!nis) return;
+  const s = S.find(x => String(x.nis).trim() === nis.trim()); if (!s) { alert('NIS tidak ditemukan.'); return; }
+  const list = sppLoad('wali', []), a = list.find(x => x.id === id); if (!a) return;
+  a.anak = [...new Set([...(a.anak || []).map(String), String(s.id)])]; if (sppWaliSave(list)) T();
 }
 
 /* --- Excel --- */
 function sppXlsxOk() { if (typeof XLSX === 'undefined') { alert('Pustaka Excel belum termuat. Pastikan perangkat terhubung internet.'); return false; } return true; }
-function sppExportAkses() {
-  if (!sppXlsxOk()) return;
-  const rows = [['NIS', 'Nama', 'Kelas', 'Jenjang', 'Wali', 'PIN Wali']].concat(S.map(s => [String(s.nis), s.nama, s.kelas, sppJenjang(s), s.wali || '', s.pinWali || '']));
-  const wb = XLSX.utils.book_new(), ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = [14, 28, 10, 10, 22, 10].map(w => ({ wch: w }));
-  XLSX.utils.book_append_sheet(wb, ws, 'Akses Wali'); XLSX.writeFile(wb, 'Daftar_Akses_Wali.xlsx');
-}
 function sppExportRekap() {
   if (!sppXlsxOk()) return;
   const cfg = sppCfg(), bills = sppLoad('tagihan', []).filter(b => b.ta == sppF.ta), months = sppMonths(sppF.ta), wb = XLSX.utils.book_new();
